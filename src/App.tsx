@@ -1,53 +1,70 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
+import {Editor} from './Editor.tsx'
+import {useEffect, useState} from 'react'
+
+function jsonify(o: any) {
+    let json = {}
+    if (typeof o === 'string') {
+        try {
+            json = JSON.parse(o)
+            if (json !== o) {
+                json = jsonify(json)
+            }
+        } catch (e) {
+            return o
+        }
+    } else if (typeof o === 'object' && o !== null) {
+        json = o
+    } else {
+        return o
+    }
+    if (Array.isArray(json)) {
+        for (let i = 0; i < json.length; i++) {
+            json[i] = jsonify(json[i])
+        }
+        return json
+    } else {
+        for (const key in json) {
+            // @ts-ignore
+            json[key] = jsonify(json[key])
+        }
+        return json
+    }
+}
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+    const [doc, setDoc] = useState<string>("")
+    const style = {
+        height: "100vh",
+        width: "100vw"
+    }
+    useEffect(() => {
+        setDoc(`{"key": "value"}`)
+    }, [])
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
-  }
+    const fn1 = () => {
+        console.log(doc)
+        setDoc(JSON.stringify(JSON.parse(doc!), null, 4))
+        console.log(doc)
+    }
 
-  return (
-    <div className="container">
-      <h1>Welcome to Tauri!</h1>
+    const fn2 = () => {
+        console.log(doc)
+        setDoc(JSON.stringify(jsonify(doc), null, 4))
+        console.log(doc)
+    }
 
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-
-      <p>{greetMsg}</p>
-    </div>
-  );
+    return (
+        <div style={style}>
+            <br/>
+            <div>
+                <button onClick={fn1}>格式化</button>
+                <button onClick={fn2}>如意如意，随我心意，快快显灵</button>
+            </div>
+            <br/>
+            <Editor doc={doc}/>
+        </div>
+    );
 }
 
 export default App;

@@ -12,7 +12,11 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@tauri-apps/api": "^1"
+    "@tauri-apps/api": "^1",
+    "codemirror": "^6.0.1",
+    "@codemirror/state": "^6.0.2",
+    "@codemirror/language": "^6.10.2",
+    "@codemirror/lang-json": "^6.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
