@@ -1,18 +1,33 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {EditorState} from '@codemirror/state'
 import {basicSetup, EditorView} from 'codemirror'
-import {json} from '@codemirror/lang-json'
+import {json, jsonParseLinter} from '@codemirror/lang-json'
+import {linter} from '@codemirror/lint'
+import "./Editor.css"
 
 interface IEditor {
     doc: string
+    onChange: (value: string) => void
 }
 
-export const Editor: React.FC<IEditor> = ({doc}) => {
+const changeFacet = (onChange: (value: string) => void) => EditorView.updateListener.of(update => {
+    if (update.docChanged && onChange && update.transactions.some(tr => tr.isUserEvent("input"))) {
+        onChange(update.state.doc.toString())
+        console.log("onchange: ", update.state.doc.toString())
+    }
+});
+
+export const Editor: React.FC<IEditor> = ({doc, onChange}) => {
     const containerRef = useRef(null)
     const [editorView, setEditorView] = useState<EditorView>()
     useEffect(() => {
         const state = EditorState.create({
-            doc, extensions: [basicSetup, json()]
+            doc, extensions: [
+                basicSetup, json(), linter(jsonParseLinter()),
+                // todo format on user paste
+                EditorState.transactionFilter.of(tr => tr),
+                changeFacet(onChange)
+            ],
         })
         const view = new EditorView({
             state, parent: containerRef.current!
@@ -35,5 +50,5 @@ export const Editor: React.FC<IEditor> = ({doc}) => {
         })
     }, [doc])
 
-    return <div ref={containerRef}/>
+    return <div ref={containerRef} style={{height: "90%", width: "90%", margin: "auto"}}/>
 }

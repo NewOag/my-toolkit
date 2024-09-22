@@ -1,3 +1,8 @@
+body {
+  height: 100vh;
+  width: 100vw;
+}
+
 .logo.vite:hover {
   filter: drop-shadow(0 0 2em #747bff);
 }
@@ -6,6 +11,12 @@
   filter: drop-shadow(0 0 2em #61dafb);
 }
 :root {
+
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow-y: hidden;
+
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
@@ -23,7 +34,7 @@
 
 .container {
   margin: 0;
-  padding-top: 10vh;
+  /*padding-top: 10vh;*/
   display: flex;
   flex-direction: column;
   justify-content: center;
