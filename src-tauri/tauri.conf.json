@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "my-tookit",
+    "productName": "my-toolkit",
     "version": "0.1.0"
   },
   "tauri": {
@@ -19,9 +19,11 @@
     },
     "windows": [
       {
-        "title": "my-tookit",
+        "title": "my-toolkit",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "resizable": true,
+        "center": true
       }
     ],
     "security": {
@@ -30,7 +32,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.my-tookit.app",
+      "identifier": "com.my-toolkit.app",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",

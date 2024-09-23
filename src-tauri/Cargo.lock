@@ -1554,7 +1554,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "my-tookit"
+name = "my-toolkit"
 version = "0.1.0"
 dependencies = [
  "serde",

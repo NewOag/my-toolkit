@@ -1,7 +1,13 @@
-# Tauri + React + Typescript
+# my-toolkit
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+## todos
 
-## Recommended IDE Setup
+- [ ] json tool
+- [ ] diff tool
+- [ ] kafka tool
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## json tool
+
+- [ ] build toolkit base style 
+- [ ] auto format content when user paste
+
