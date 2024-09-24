@@ -6,13 +6,19 @@ function jsonify(o: any) {
     let json = {}
     if (typeof o === 'string') {
         try {
-            o = decodeURI(o)
             json = JSON.parse(o)
             if (json !== o) {
                 json = jsonify(json)
             }
         } catch (e) {
-            return o
+            try {
+                json = JSON.parse(decodeURI(o))
+                if (json !== o) {
+                    json = jsonify(json)
+                }
+            } catch (e) {
+                return o
+            }
         }
     } else if (typeof o === 'object' && o !== null) {
         json = o
