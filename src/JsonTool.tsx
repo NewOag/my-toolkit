@@ -1,84 +1,66 @@
 import "./JsonTool.css";
 import {Editor} from './Editor.tsx'
 import {useEffect, useState} from 'react'
+import {recurParseObj} from './utils/JsonUtil.ts'
 
-function jsonify(o: any) {
-    let json = {}
-    if (typeof o === 'string') {
-        try {
-            json = JSON.parse(o)
-            if (json !== o) {
-                json = jsonify(json)
-            }
-        } catch (e) {
-            try {
-                json = JSON.parse(decodeURI(o))
-                if (json !== o) {
-                    json = jsonify(json)
-                }
-            } catch (e) {
-                return o
-            }
-        }
-    } else if (typeof o === 'object' && o !== null) {
-        json = o
-    } else {
-        return JSON.stringify(o, null, 2)
-    }
-    if (Array.isArray(json)) {
-        for (let i = 0; i < json.length; i++) {
-            json[i] = jsonify(json[i])
-        }
-        return JSON.stringify(json, null, 2)
-    } else {
-        for (const key in json) {
-            // @ts-ignore
-            json[key] = jsonify(json[key])
-        }
-        return JSON.stringify(json, null, 2)
-    }
-}
 
 function JsonTool() {
-    const [doc, setDoc] = useState<string>("")
+    const [doc, setDoc] = useState<string>()
     const [value, onChange] = useState<string>()
-
-    useEffect(() => {
-        const defaultValue = `{"key": "value"}`
-        setDoc(defaultValue)
-        onChange(defaultValue)
-    }, [])
 
     useEffect(() => {
         onChange(doc)
     }, [doc])
 
     const fn1 = () => {
-        console.log(value)
         try {
             const newDoc = JSON.stringify(JSON.parse(value!), null, 2)
             setDoc(newDoc)
-        } catch (_) {}
-        console.log(value)
+        } catch (_) {
+        }
     }
 
     const fn2 = () => {
-        console.log(value)
+        const newDoc = JSON.stringify(recurParseObj(value), null, 2)
+        setDoc(newDoc)
+    }
+
+    const fn3 = () => {
         try {
-            const newDoc = jsonify(value!)
+            const newDoc = JSON.stringify(JSON.parse(value!))
             setDoc(newDoc)
-        } catch (_) {}
-        console.log(value)
+        } catch (e) {
+
+        }
+    }
+
+    const fn4 = () => {
+        const newDoc = JSON.stringify(value)
+        setDoc(newDoc)
+    }
+
+    const fn5 = () => {
+        try {
+            const newDoc = JSON.parse(value!)
+            setDoc(newDoc)
+        } catch (e) {
+
+        }
     }
 
     return (
         <div id="container">
-            <div style={{display: "flex", justifyContent: "center"}}>
-                <button onClick={fn1}>格式化</button>
-                <button onClick={fn2}>如意如意，随我心意，快快显灵</button>
-                <button onClick={() => console.log("current value is ", value)}>输出</button>
+            <div className="button-container">
+                <button onClick={fn1}>Format</button>
+                <button onClick={fn2}>Format Pro</button>
+                <button onClick={fn3}>Compress</button>
+                <button onClick={fn4}>Escape</button>
+                <button onClick={fn5}>Unescape</button>
+                <button onClick={() => console.log("current value is ", value)}>Print</button>
             </div>
-            <Editor doc={doc} onChange={onChange}/>
+            <div className="editor-container">
+                <Editor doc={doc} onChange={onChange}/>
+            </div>
         </div>
     );
 }

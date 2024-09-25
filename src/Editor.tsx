@@ -6,14 +6,13 @@ import {linter} from '@codemirror/lint'
 import "./Editor.css"
 
 interface IEditor {
-    doc: string
-    onChange: (value: string) => void
+    doc?: string
+    onChange?: (value: string) => void
 }
 
-const changeFacet = (onChange: (value: string) => void) => EditorView.updateListener.of(update => {
+const changeFacet = (onChange?: (value: string) => void) => EditorView.updateListener.of(update => {
     if (update.docChanged && onChange && update.transactions.some(tr => tr.isUserEvent("input"))) {
         onChange(update.state.doc.toString())
-        console.log("onchange: ", update.state.doc.toString())
     }
 });
 
@@ -25,8 +24,16 @@ export const Editor: React.FC<IEditor> = ({doc, onChange}) => {
             doc, extensions: [
                 basicSetup, json(), linter(jsonParseLinter()),
                 // todo format on user paste
-                EditorState.transactionFilter.of(tr => tr),
-                changeFacet(onChange)
+                EditorState.transactionFilter.of(tr => {
+                    console.debug("tr is ", tr)
+                    return tr
+                }),
+                changeFacet(onChange),
+                EditorView.theme({
+                    "&.cm-focused": {
+                        outline: "none"
+                    }
+                })
             ],
         })
         const view = new EditorView({
@@ -50,5 +57,5 @@ export const Editor: React.FC<IEditor> = ({doc, onChange}) => {
         })
     }, [doc])
 
-    return <div ref={containerRef} style={{height: "90%", width: "90%", margin: "auto"}}/>
+    return <div ref={containerRef} className="code-editor"/>
 }

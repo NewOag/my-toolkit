@@ -1,4 +1,9 @@
+.code-editor {
+    height: 100%;
+    width: 100%;
+}
+
 .cm-editor {
-    height: inherit;
-    width: inherit;
+    height: 100%;
+    width: 100%;
 }
