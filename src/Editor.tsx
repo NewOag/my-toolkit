@@ -32,7 +32,7 @@ export const Editor: React.FC<IEditor> = ({doc, onChange}) => {
                 EditorView.theme({
                     "&.cm-focused": {
                         outline: "none"
-                    }
+                    },
                 })
             ],
         })

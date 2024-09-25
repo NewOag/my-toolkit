@@ -8,7 +8,7 @@
 }
 
 .button-container {
-    height: 4%;
+    min-height: 4%;
     margin-left: 1%;
     margin-right: 1%;
     margin-top: 2px;

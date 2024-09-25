@@ -13,11 +13,8 @@ function JsonTool() {
     }, [doc])
 
     const fn1 = () => {
-        try {
-            const newDoc = JSON.stringify(JSON.parse(value!), null, 2)
-            setDoc(newDoc)
-        } catch (_) {
-        }
+        const newDoc = JSON.stringify(JSON.parse(value!), null, 2)
+        setDoc(newDoc)
     }
 
     const fn2 = () => {
@@ -26,12 +23,8 @@ function JsonTool() {
     }
 
     const fn3 = () => {
-        try {
-            const newDoc = JSON.stringify(JSON.parse(value!))
-            setDoc(newDoc)
-        } catch (e) {
-
-        }
+        const newDoc = JSON.stringify(JSON.parse(value!))
+        setDoc(newDoc)
     }
 
     const fn4 = () => {
@@ -40,12 +33,8 @@ function JsonTool() {
     }
 
     const fn5 = () => {
-        try {
-            const newDoc = JSON.parse(value!)
-            setDoc(newDoc)
-        } catch (e) {
-
-        }
+        const newDoc = JSON.parse(value!)
+        setDoc(newDoc)
     }
 
     return (
