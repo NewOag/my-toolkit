@@ -15,4 +15,4 @@
 - [x] json compress
 - [ ] json comparator
 - [ ] beautiful style
-
+- [ ] layout fix
