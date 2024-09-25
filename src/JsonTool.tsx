@@ -18,8 +18,9 @@ function JsonTool() {
     }
 
     const fn2 = () => {
-        const newDoc = JSON.stringify(recurParseObj(value), null, 2)
-        setDoc(newDoc)
+        const obj = recurParseObj(value)
+        if (typeof obj == "object") setDoc(JSON.stringify(obj, null, 2))
+        else setDoc(obj)
     }
 
     const fn3 = () => {
