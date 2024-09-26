@@ -23,3 +23,4 @@
 - [ ] layout fix
 - [ ] after format json, cursor should be 0
 - [ ] hide scroller
+- [ ] copy button
