@@ -35,6 +35,10 @@ export const Editor: React.FC<IEditor> = ({doc, onChange}) => {
                     },
                     ".cm-scroller": {
                         "scrollbar-width": "none"
+                    },
+                    ".cm-scroller::-webkit-scrollbar": {
+                        width: 0,
+                        height: 0
                     }
                 })
             ],
