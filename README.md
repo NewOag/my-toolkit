@@ -6,6 +6,11 @@
 - [ ] diff tool
 - [ ] kafka tool
 
+## basic
+
+- [x] close window and don't quit app
+- [ ] menu
+
 ## json tool
 
 - [x] build toolkit base style 
