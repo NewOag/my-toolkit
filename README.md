@@ -24,4 +24,7 @@
 - [ ] after format json, cursor should be 0
 - [ ] hide scroller
 - [ ] copy button
+- [ ] save as file button
+- [ ] read from file
+- [ ] drop file to read
 - [ ] check windows scroller behavior
