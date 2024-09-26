@@ -21,3 +21,5 @@
 - [ ] json comparator
 - [ ] beautiful style
 - [ ] layout fix
+- [ ] after format json, cursor should be 0
+- [ ] hide scroller

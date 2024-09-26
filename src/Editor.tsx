@@ -33,6 +33,9 @@ export const Editor: React.FC<IEditor> = ({doc, onChange}) => {
                     "&.cm-focused": {
                         outline: "none"
                     },
+                    ".cm-scroller": {
+                        "scrollbar-width": "none"
+                    }
                 })
             ],
         })
