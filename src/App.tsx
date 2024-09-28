@@ -1,5 +1,5 @@
 import "./App.css";
-import JsonTool from './JsonTool.tsx'
+import JsonTool from './pages/JsonTool/JsonTool.tsx'
 
 function App() {
 

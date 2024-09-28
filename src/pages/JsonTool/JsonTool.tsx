@@ -1,7 +1,7 @@
 import "./JsonTool.css";
-import {Editor, EditorInstance} from './Editor.tsx'
+import {Editor, EditorInstance} from '../../common/Editor/Editor.tsx'
 import {useRef} from 'react'
-import {recurParseObj} from './utils/JsonUtil.ts'
+import {recurParseObj} from '../../utils/JsonUtil.ts'
 import JSON5 from "json5"
 
 

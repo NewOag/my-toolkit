@@ -5,6 +5,7 @@
 - [ ] json tool
 - [ ] diff tool
 - [ ] kafka tool
+- [ ] GitHub action to publish
 
 ## basic
 
@@ -13,7 +14,7 @@
 - [ ] custom title display
 - [ ] app icons
 - [ ] app menu
-- [ ] error message notification
+- [ ] global message notification
 - [ ] add eslint
 
 ## json tool
