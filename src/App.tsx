@@ -3,9 +3,9 @@ import JsonTool from './JsonTool.tsx'
 
 function App() {
 
-    return (
+    return <>
         <JsonTool/>
-    );
+    </>
 }
 
 export default App;

@@ -1,3 +1,5 @@
+import JSON5 from "json5"
+
 /**
  * parse string to object and parse its property to object if it's valid json string
  * @param json json
@@ -8,7 +10,7 @@ export function recurParseObj(json: any): any {
     }
     if (typeof json == "string") {
         try {
-            const parsed = JSON.parse(json)
+            const parsed = JSON5.parse(json)
             // number/boolean/null
             if (parsed && typeof parsed != "object") {
                 return json

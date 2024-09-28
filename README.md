@@ -10,6 +10,11 @@
 
 - [x] close window and don't quit app
 - [ ] menu
+- [ ] custom title display
+- [ ] app icons
+- [ ] app menu
+- [ ] error message notification
+- [ ] add eslint
 
 ## json tool
 

@@ -1,12 +1,18 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react'
 import {EditorState} from '@codemirror/state'
 import {basicSetup, EditorView} from 'codemirror'
 import {json, jsonParseLinter} from '@codemirror/lang-json'
 import {linter} from '@codemirror/lint'
 import "./Editor.css"
 
-interface IEditor {
-    doc?: string
+export interface EditorInstance {
+    get value(): string;
+
+    set value(v: string);
+}
+
+export interface IEditor {
+    value?: string
     onChange?: (value: string) => void
 }
 
@@ -16,19 +22,18 @@ const changeFacet = (onChange?: (value: string) => void) => EditorView.updateLis
     }
 });
 
-export const Editor: React.FC<IEditor> = ({doc, onChange}) => {
+const Editor0: React.ForwardRefRenderFunction<EditorInstance, IEditor> = ({value, onChange}, ref) => {
     const containerRef = useRef(null)
     const [editorView, setEditorView] = useState<EditorView>()
     useEffect(() => {
         const state = EditorState.create({
-            doc, extensions: [
-                basicSetup, json(), linter(jsonParseLinter()),
+            doc: value, extensions: [
+                basicSetup, json(), linter(jsonParseLinter()), changeFacet(onChange),
                 // todo format on user paste
                 EditorState.transactionFilter.of(tr => {
                     console.debug("tr is ", tr)
                     return tr
                 }),
-                changeFacet(onChange),
                 EditorView.theme({
                     "&.cm-focused": {
                         outline: "none"
@@ -50,19 +55,28 @@ export const Editor: React.FC<IEditor> = ({doc, onChange}) => {
         return () => view.destroy()
     }, [])
 
-    useEffect(() => {
-        let insert = doc
-        if (typeof doc !== 'string') {
-            insert = JSON.stringify(doc)
-        }
+    const changeValue = (str: string) => {
         editorView?.dispatch({
             changes: {
                 from: 0,
                 to: editorView?.state.doc.length,
-                insert
+                insert: str
             }
         })
-    }, [doc])
+    }
+
+    const editor: EditorInstance = new class implements EditorInstance {
+        get value(): string {
+            return editorView?.state.doc.toString()!
+        }
+
+        set value(str) {
+            changeValue(str)
+        }
+    }
+    useImperativeHandle(ref, () => editor)
 
     return <div ref={containerRef} className="code-editor"/>
 }
+
+export const Editor = forwardRef(Editor0)
