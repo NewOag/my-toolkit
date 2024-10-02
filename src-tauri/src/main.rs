@@ -2,10 +2,13 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use tauri::{GlobalWindowEvent, Manager, WindowMenuEvent};
-
+mod storage;
+mod kafka;
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn greet(name: &str) -> String {
+    use storage::test;
+    test();
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
