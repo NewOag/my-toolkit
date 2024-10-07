@@ -1,16 +1,12 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use crate::kafka::{topics, send_message, fetch_message};
 use tauri::{GlobalWindowEvent, Manager, WindowMenuEvent};
+
 mod storage;
 mod kafka;
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    use storage::test;
-    test();
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+
 
 fn handle_window_event(event: GlobalWindowEvent) {
     match event.event() {
@@ -51,11 +47,11 @@ fn main() {
         .add_item(CustomMenuItem::new("hide", "Hide"))
         .add_submenu(submenu);
 
-
     tauri::Builder::default()
         .menu(menu)
         .on_menu_event(handle_menu_event)
         .on_window_event(handle_window_event)
+        .invoke_handler(tauri::generate_handler![topics, send_message, fetch_message])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
