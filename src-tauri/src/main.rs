@@ -1,26 +1,24 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use crate::kafka::{topics, send_message, fetch_message};
+use crate::kafka::{fetch_message, send_message, topics};
 use tauri::{GlobalWindowEvent, Manager, WindowMenuEvent};
 
-mod storage;
 mod kafka;
-
+mod storage;
 
 fn handle_window_event(event: GlobalWindowEvent) {
-    match event.event() {
-        tauri::WindowEvent::CloseRequested { api, .. } => {
-            #[cfg(not(target_os = "macos"))] {
-                event.window().hide().unwrap();
-            }
-
-            #[cfg(target_os = "macos")] {
-                tauri::AppHandle::hide(&event.window().app_handle()).unwrap();
-            }
-            api.prevent_close();
+    if let tauri::WindowEvent::CloseRequested { api, .. } = event.event() {
+        #[cfg(not(target_os = "macos"))]
+        {
+            event.window().hide().unwrap();
         }
-        _ => {}
+
+        #[cfg(target_os = "macos")]
+        {
+            tauri::AppHandle::hide(&event.window().app_handle()).unwrap();
+        }
+        api.prevent_close();
     }
 }
 
@@ -51,7 +49,11 @@ fn main() {
         .menu(menu)
         .on_menu_event(handle_menu_event)
         .on_window_event(handle_window_event)
-        .invoke_handler(tauri::generate_handler![topics, send_message, fetch_message])
+        .invoke_handler(tauri::generate_handler![
+            topics,
+            send_message,
+            fetch_message
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
