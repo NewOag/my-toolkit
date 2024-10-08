@@ -5,6 +5,7 @@ use kafka::client::{fetch, metadata, FetchPartition, KafkaClient, ProduceConfirm
 use log::debug;
 use std::time::Duration;
 use serde_json::{json, Value};
+use crate::kafka::message::Message;
 
 mod message;
 mod connection;
@@ -41,7 +42,7 @@ pub fn fetch_message(hosts: &str, topic: &str) -> Value {
     let reqs = &[FetchPartition::new(topic, 0, 0)];
     let result = client.fetch_messages(reqs);
     debug!("hosts: {}, topic: {}, result: {:?}", hosts, topic, result);
-    let mut messages = vec![];
+    let mut messages: Vec<Message> = vec![];
     let resps = result.unwrap();
     for resp in &resps {
         for t in resp.topics() {
@@ -52,8 +53,7 @@ pub fn fetch_message(hosts: &str, topic: &str) -> Value {
                     }
                     Ok(ref data) => {
                         for msg in data.messages() {
-                            let string = String::from_utf8_lossy(msg.value);
-                            messages.push(string)
+                            messages.push(msg.into())
                         }
                     }
                 }

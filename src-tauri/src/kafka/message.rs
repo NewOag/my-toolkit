@@ -15,12 +15,12 @@ pub struct Message<'a> {
     pub value: &'a [u8],
 }
 
-impl Message<'static> {
-    fn from(msg: kafka::client::fetch::Message) -> Message {
+impl From<kafka::client::fetch::Message> for Message<'static> {
+    fn from(value: kafka::consumer::Message) -> Self {
         Message {
-            key: msg.key,
-            value: msg.value,
-            offset: msg.offset,
+            key: value.key,
+            value: value.value,
+            offset: value.offset,
         }
     }
 }
