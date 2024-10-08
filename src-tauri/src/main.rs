@@ -46,7 +46,8 @@ fn main() {
         .add_submenu(submenu);
 
     tauri::Builder::default()
-        .menu(menu)
+        // todo 加上了会导致复制粘贴快捷键失效
+        // .menu(menu)
         .on_menu_event(handle_menu_event)
         .on_window_event(handle_window_event)
         .invoke_handler(tauri::generate_handler![
