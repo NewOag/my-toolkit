@@ -15,8 +15,17 @@ pub struct Message<'a> {
     pub value: &'a [u8],
 }
 
-impl From<kafka::client::fetch::Message> for Message<'static> {
-    fn from(value: kafka::consumer::Message) -> Self {
+impl<'a> From<kafka::client::fetch::Message<'a>> for Message<'a> {
+    fn from(value: kafka::client::fetch::Message<'a>) -> Self {
+        Message {
+            key: value.key,
+            value: value.value,
+            offset: value.offset,
+        }
+    }
+}
+impl <'a> From<&kafka::consumer::Message<'a>> for Message<'a> {
+    fn from(value: &kafka::consumer::Message<'a>) -> Self {
         Message {
             key: value.key,
             value: value.value,
@@ -25,7 +34,7 @@ impl From<kafka::client::fetch::Message> for Message<'static> {
     }
 }
 
-impl Serialize for Message<'static> {
+impl Serialize for Message<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,

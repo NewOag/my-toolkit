@@ -1,5 +1,3 @@
-use std::fmt::Pointer;
-use std::io::Read;
 use kafka::client::metadata::Topics;
 use kafka::client::{fetch, metadata, FetchPartition, KafkaClient, ProduceConfirm, ProduceMessage, RequiredAcks};
 use log::debug;
