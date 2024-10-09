@@ -1,10 +1,10 @@
 import "./App.css";
-import JsonTool from './pages/JsonTool/JsonTool.tsx'
+import Layout from './pages/Layout/Layout.tsx'
 
 function App() {
 
     return <>
-        <JsonTool/>
+        <Layout/>
     </>
 }
 

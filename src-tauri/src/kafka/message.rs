@@ -40,8 +40,10 @@ impl Serialize for Message<'_> {
         S: Serializer,
     {
         let mut state = serializer.serialize_struct("Message", 3)?;
-        state.serialize_field("key", &self.key)?;
-        state.serialize_field("value", &self.value)?;
+        let key = String::from_utf8_lossy(self.key);
+        state.serialize_field("key", &key)?;
+        let value = String::from_utf8_lossy(self.value);
+        state.serialize_field("value", &value)?;
         state.serialize_field("offset", &self.offset)?;
         state.end()
     }
