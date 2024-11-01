@@ -3,9 +3,11 @@
 
 use crate::kafka::{fetch_message, send_message, topics};
 use tauri::{GlobalWindowEvent, Manager, WindowMenuEvent};
+use crate::json::{compress, format, recur_format};
 
 mod kafka;
 mod storage;
+mod json;
 
 fn handle_window_event(event: GlobalWindowEvent) {
     if let tauri::WindowEvent::CloseRequested { api, .. } = event.event() {
@@ -53,7 +55,10 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             topics,
             send_message,
-            fetch_message
+            fetch_message,
+            format,
+            recur_format,
+            compress
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

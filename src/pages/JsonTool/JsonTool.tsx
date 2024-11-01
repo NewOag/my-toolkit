@@ -1,8 +1,20 @@
 import "./JsonTool.css";
 import {Editor, EditorInstance} from '../../common/Editor/Editor.tsx'
 import React, {useRef} from 'react'
-import {recurParseObj} from '../../utils/JsonUtil.ts'
-import JSON5 from "json5"
+
+import {invoke} from '@tauri-apps/api'
+
+async function format(str: string): Promise<string> {
+    return await invoke('format', {str})
+}
+
+async function recurFormat(str: string): Promise<string> {
+    return await invoke('recur_format', {str})
+}
+
+async function compress(str: string): Promise<string> {
+    return await invoke('compress', {str})
+}
 
 const JsonTool: React.FC = () => {
     const editorRef = useRef<EditorInstance>(null)
@@ -22,20 +34,21 @@ const JsonTool: React.FC = () => {
         console.error("JsonTool setValue failed: str=", str)
     }
 
-    const fn1 = () => {
-        const newValue = JSON.stringify(JSON5.parse(getValue()), null, 2)
-        setValue(newValue)
+    const fn1 = async () => {
+        setValue(await format(getValue()))
     }
 
-    const fn2 = () => {
-        const obj = recurParseObj(getValue())
-        if (typeof obj == "object") setValue(JSON.stringify(obj, null, 2))
-        else setValue(obj)
+    const fn2 = async () => {
+        // const obj = recurParseObj(getValue())
+        // if (typeof obj == "object") setValue(JSON.stringify(obj, null, 2))
+        // else setValue(obj)
+        setValue(await recurFormat(getValue()))
     }
 
-    const fn3 = () => {
-        const newValue = JSON.stringify(JSON.parse(getValue()))
-        setValue(newValue)
+    const fn3 = async () => {
+        // const newValue = JSON.stringify(JSON.parse(getValue()))
+        // setValue(newValue)
+        setValue(await compress(getValue()))
     }
 
     const fn4 = () => {
