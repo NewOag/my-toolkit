@@ -4,17 +4,26 @@ import React, {useRef} from 'react'
 
 import {invoke} from '@tauri-apps/api'
 
-async function format(str: string): Promise<string> {
-    return await invoke('format', {str})
+// async function format(str: string): Promise<string> {
+//     return await invoke('format', {str})
+// }
+//
+// async function recurFormat(str: string): Promise<string> {
+//     return await invoke('recur_format', {str})
+// }
+//
+// async function compress(str: string): Promise<string> {
+//     return await invoke('compress', {str})
+// }
+
+function generate(handler: string) {
+    return async function (str: string): Promise<string> {
+        return await invoke(handler, {str})
+    }
 }
 
-async function recurFormat(str: string): Promise<string> {
-    return await invoke('recur_format', {str})
-}
-
-async function compress(str: string): Promise<string> {
-    return await invoke('compress', {str})
-}
+const handlers = ['format', 'recur_format', 'compress', 'stringify', 'parse']
+const [format, recurFormat, compress, stringify, parse] = handlers.map(handler => generate(handler))
 
 const JsonTool: React.FC = () => {
     const editorRef = useRef<EditorInstance>(null)
@@ -51,14 +60,14 @@ const JsonTool: React.FC = () => {
         setValue(await compress(getValue()))
     }
 
-    const fn4 = () => {
-        const newValue = JSON.stringify(getValue())
-        setValue(newValue)
+    const fn4 = async () => {
+        // const newValue = JSON.stringify(getValue())
+        setValue(await stringify(getValue()))
     }
 
-    const fn5 = () => {
-        const newValue = JSON.parse(getValue())
-        setValue(newValue)
+    const fn5 = async () => {
+        // const newValue = JSON.parse(getValue())
+        setValue(await parse(getValue()))
     }
 
 

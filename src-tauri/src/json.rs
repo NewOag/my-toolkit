@@ -32,6 +32,22 @@ pub fn compress(str: &str) -> String {
     to_string(&value).unwrap()
 }
 
+#[tauri::command]
+pub fn stringify(str: &str) -> String {
+    to_string(&str).unwrap()
+}
+
+#[tauri::command]
+pub fn parse(str: &str) -> String {
+    let result: Result<Value, Error> = from_str(str);
+    if result.is_err() {
+        return str.to_string();
+    }
+    let value = result.unwrap();
+    if value.is_str() { value.as_str().unwrap().to_string() } else { str.to_string() }
+}
+
+
 fn recur_parse(json: &mut Value) -> &mut Value {
     match json.get_type() {
         JsonType::Array => {

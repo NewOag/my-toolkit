@@ -3,7 +3,7 @@
 
 use crate::kafka::{fetch_message, send_message, topics};
 use tauri::{GlobalWindowEvent, Manager, WindowMenuEvent};
-use crate::json::{compress, format, recur_format};
+use crate::json::{format, recur_format, compress, stringify, parse};
 
 mod kafka;
 mod storage;
@@ -56,9 +56,7 @@ fn main() {
             topics,
             send_message,
             fetch_message,
-            format,
-            recur_format,
-            compress
+            format, recur_format, compress, stringify, parse
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
