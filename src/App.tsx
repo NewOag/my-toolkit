@@ -1,4 +1,4 @@
-import "./App.css";
+import "./App.less";
 import Layout from './pages/Layout/Layout.tsx'
 
 function App() {
