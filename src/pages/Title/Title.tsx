@@ -1,4 +1,4 @@
-import "./Title.css"
+import "./Title.less"
 import {useEffect} from 'react'
 import {appWindow} from '@tauri-apps/api/window'
 

@@ -1,4 +1,4 @@
-import "./Layout.css"
+import "./Layout.less"
 import React, {useState} from 'react'
 import JsonTool from '../JsonTool/JsonTool.tsx'
 import KafkaTool from '../KafkaTool/KafkaTool.tsx'
@@ -22,8 +22,8 @@ const Layout: React.FC<ILayout> = ({}) => {
 
     return <div className="layout-container">
         <div className="left-bar-container">
-            <div className="json-icon" onClick={changeTool(json)}>JSON</div>
-            <div className="kafka-icon" onClick={changeTool(kafka)}>KAFKA</div>
+            <div className="tool-icon json-icon" onClick={changeTool(json)}></div>
+            <div className="tool-icon kafka-icon" onClick={changeTool(kafka)}></div>
         </div>
         <div className="right-bar-container"></div>
         <div className="top-bar-container"></div>

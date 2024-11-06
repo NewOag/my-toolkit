@@ -3,7 +3,7 @@ import {EditorState} from '@codemirror/state'
 import {basicSetup, EditorView} from 'codemirror'
 import {json, jsonParseLinter} from '@codemirror/lang-json'
 import {linter} from '@codemirror/lint'
-import "./Editor.css"
+import "./Editor.less"
 
 export interface EditorInstance {
     get value(): string;

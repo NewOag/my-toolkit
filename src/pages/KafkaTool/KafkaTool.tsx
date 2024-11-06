@@ -1,4 +1,4 @@
-import "./KafkaTool.css"
+import "./KafkaTool.less"
 import React, {useEffect, useRef} from 'react'
 import {invoke} from '@tauri-apps/api'
 import {Editor, EditorInstance} from '../../common/Editor/Editor.tsx'

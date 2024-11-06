@@ -1,4 +1,4 @@
-import "./Message.css"
+import "./Message.less"
 function Message() {
     return <div className="message-container">
 

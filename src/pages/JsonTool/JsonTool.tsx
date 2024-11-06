@@ -1,4 +1,4 @@
-import "./JsonTool.css";
+import "./JsonTool.less";
 import {Editor, EditorInstance} from '../../common/Editor/Editor.tsx'
 import React, {useRef} from 'react'
 
