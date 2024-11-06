@@ -53,9 +53,7 @@ fn main() {
         .on_menu_event(handle_menu_event)
         .on_window_event(handle_window_event)
         .invoke_handler(tauri::generate_handler![
-            topics,
-            send_message,
-            fetch_message,
+            topics,send_message,fetch_message,
             format, recur_format, compress, stringify, parse
         ])
         .run(tauri::generate_context!())
