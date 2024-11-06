@@ -19,7 +19,8 @@ pub fn recur_format(str: &str) -> String {
         return str.to_string();
     }
     let mut value = result.unwrap();
-    to_string_pretty(recur_parse(&mut value)).unwrap()
+    recur_parse(&mut value);
+    to_string_pretty(&value).unwrap()
 }
 
 #[tauri::command]
@@ -48,22 +49,29 @@ pub fn parse(str: &str) -> String {
 }
 
 
-fn recur_parse(json: &mut Value) -> &mut Value {
+fn recur_parse(mut json: &mut Value) {
     match json.get_type() {
         JsonType::Array => {
             let array = json.as_array_mut().unwrap();
             for item in array.iter_mut() {
                 recur_parse(item);
             }
-            json
         }
         JsonType::Object => {
             let obj = json.as_object_mut().unwrap();
             for (_key, value) in obj.iter_mut() {
-                *value = recur_parse(value).clone();
+                recur_parse(value);
             }
-            json
         }
-        _ => json,
+        JsonType::String => {
+            let s = json.as_str().unwrap();
+            let result: Result<Value, Error> = from_str(s);
+            if result.is_ok() {
+                let res = result.unwrap();
+                *json = res;
+                recur_parse(&mut json);
+            }
+        }
+        _ => {}
     }
 }
