@@ -4,18 +4,6 @@ import React, {useRef} from 'react'
 
 import {invoke} from '@tauri-apps/api'
 
-// async function format(str: string): Promise<string> {
-//     return await invoke('format', {str})
-// }
-//
-// async function recurFormat(str: string): Promise<string> {
-//     return await invoke('recur_format', {str})
-// }
-//
-// async function compress(str: string): Promise<string> {
-//     return await invoke('compress', {str})
-// }
-
 function generate(handler: string) {
     return async function (str: string): Promise<string> {
         return await invoke(handler, {str})
@@ -48,28 +36,20 @@ const JsonTool: React.FC = () => {
     }
 
     const fn2 = async () => {
-        // const obj = recurParseObj(getValue())
-        // if (typeof obj == "object") setValue(JSON.stringify(obj, null, 2))
-        // else setValue(obj)
         setValue(await recurFormat(getValue()))
     }
 
     const fn3 = async () => {
-        // const newValue = JSON.stringify(JSON.parse(getValue()))
-        // setValue(newValue)
         setValue(await compress(getValue()))
     }
 
     const fn4 = async () => {
-        // const newValue = JSON.stringify(getValue())
         setValue(await stringify(getValue()))
     }
 
     const fn5 = async () => {
-        // const newValue = JSON.parse(getValue())
         setValue(await parse(getValue()))
     }
-
 
     return (
         <div id="container">
