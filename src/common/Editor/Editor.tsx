@@ -26,7 +26,7 @@ const changeFacet = (onChange?: (value: string) => void) => EditorView.updateLis
 const foldConfig = {
     placeholderDOM(_view: EditorView, _onclick: (event: Event) => void, prepared: any)  {
         const span = document.createElement('span')
-        span.innerText = ` // ${prepared} items`
+        span.innerText = ` // ${prepared} items `
         span.style.color = '#20202050'
         span.style.fontStyle = 'italic'
 
