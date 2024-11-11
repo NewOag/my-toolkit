@@ -2,7 +2,7 @@ import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} fro
 import {EditorState} from '@codemirror/state'
 import {basicSetup, EditorView} from 'codemirror'
 import {json, jsonParseLinter} from '@codemirror/lang-json'
-import {codeFolding} from '@codemirror/language'
+import {codeFolding, unfoldEffect} from '@codemirror/language'
 import {linter} from '@codemirror/lint'
 import './Editor.less'
 
@@ -24,12 +24,14 @@ const changeFacet = (onChange?: (value: string) => void) => EditorView.updateLis
 });
 
 const foldConfig = {
-    placeholderDOM(_view: EditorView, _onclick: (event: Event) => void, prepared: any)  {
+    placeholderDOM(_view: EditorView, _onclick: (event: Event) => void, prepared: any) {
+        const [text, from, to] = prepared
         const span = document.createElement('span')
-        span.innerText = ` // ${prepared} items `
-        span.style.color = '#20202050'
-        span.style.fontStyle = 'italic'
-
+        span.innerText = ` // ${text && text} items `
+        span.className = 'cm-holder'
+        span.onclick = (_e) => {
+            _view.dispatch({effects: unfoldEffect.of({from, to})})
+        }
         return prepared && span || null
     },
     preparePlaceholder(state: EditorState, range: { from: number, to: number }) {
@@ -37,12 +39,12 @@ const foldConfig = {
         try {
             const value = JSON.parse(foldDoc)
             if (typeof value === 'object') {
-                return Object.keys(value).length
+                return [Object.keys(value).length, range.from, range.to]
             }
         } catch (e) {
             console.error('preparePlaceholder func error', state, range, e)
         }
-        return null
+        return [null, range.from, range.to]
     }
 }
 
@@ -60,6 +62,13 @@ const Editor0: React.ForwardRefRenderFunction<EditorInstance, IEditor> = ({value
                     return tr
                 }),
                 EditorView.theme({
+                    ".cm-holder": {
+                        color: '#20202050',
+                        'font-style': 'italic'
+                    },
+                    ".cm-holder:hover": {
+                        cursor: 'pointer'
+                    },
                     "&.cm-focused": {
                         outline: "none"
                     },
