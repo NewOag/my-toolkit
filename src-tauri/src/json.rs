@@ -52,8 +52,8 @@ pub fn parse(str: &str) -> String {
 fn recur_parse(mut json: &mut Value) {
     match json.get_type() {
         JsonType::Array => {
-            let array = json.as_array_mut().unwrap();
-            for item in array.iter_mut() {
+            let arr = json.as_array_mut().unwrap();
+            for item in arr.iter_mut() {
                 recur_parse(item);
             }
         }
@@ -66,10 +66,16 @@ fn recur_parse(mut json: &mut Value) {
         JsonType::String => {
             let s = json.as_str().unwrap();
             let result: Result<Value, Error> = from_str(s);
-            if result.is_ok() {
-                let res = result.unwrap();
-                *json = res;
-                recur_parse(&mut json);
+            if result.is_err() {
+                return;
+            }
+            match result.get_type() {
+                JsonType::Object | JsonType::Array | JsonType::String => {
+                    let res = result.unwrap();
+                    *json = res;
+                    recur_parse(&mut json);
+                }
+                _ => {}
             }
         }
         _ => {}
