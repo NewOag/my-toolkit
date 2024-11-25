@@ -1,5 +1,4 @@
-use kafka::client::metadata::Topics;
-use kafka::client::{fetch, metadata, FetchPartition, KafkaClient, ProduceConfirm, ProduceMessage, RequiredAcks};
+use kafka::client::{FetchPartition, KafkaClient, ProduceMessage, RequiredAcks};
 use log::debug;
 use std::time::Duration;
 use serde_json::{json, Value};

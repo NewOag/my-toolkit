@@ -1,6 +1,5 @@
 use sonic_rs::{from_str, to_string, to_string_pretty, Error, JsonType, JsonValueMutTrait, JsonValueTrait, Value};
 
-
 #[tauri::command]
 pub fn format(str: &str) -> String {
     let result: Result<Value, Error> = from_str(str);
