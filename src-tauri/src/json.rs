@@ -23,6 +23,17 @@ pub fn recur_format(str: &str) -> String {
 }
 
 #[tauri::command]
+pub fn sort_format(str: &str) -> String {
+    let result: Result<Value, Error> = from_str(str);
+    if result.is_err() {
+        return str.to_string();
+    }
+    let mut value = result.unwrap();
+    recur_sort(&mut value);
+    to_string_pretty(&value).unwrap()
+}
+
+#[tauri::command]
 pub fn compress(str: &str) -> String {
     let result: Result<Value, Error> = from_str(str);
     if result.is_err() {
@@ -47,6 +58,32 @@ pub fn parse(str: &str) -> String {
     if value.is_str() { value.as_str().unwrap().to_string() } else { str.to_string() }
 }
 
+fn recur_sort(mut json: &mut Value) {
+    match json.get_type() {
+        JsonType::Array => {
+            let arr = json.as_array_mut().unwrap();
+            for v in arr.iter_mut() {
+                recur_sort(v);
+            }
+            arr.sort_by_key(|obj| { to_string(obj).unwrap() })
+        }
+        JsonType::Object => {
+            let mut obj = json.as_object_mut().unwrap();
+            let mut entries = vec![];
+            for (k, v) in obj.iter_mut() {
+                recur_sort(v);
+                entries.push((k, v.take()));
+            }
+            entries.sort_by_key(|(k, _v)| k.clone());
+            let mut object = sonic_rs::Object::new();
+            for (k, v) in entries {
+                object.insert(&k, v);
+            }
+            *json = object.into();
+        }
+        _ => {}
+    }
+}
 
 fn recur_parse(mut json: &mut Value) {
     match json.get_type() {

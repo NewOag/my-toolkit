@@ -10,8 +10,8 @@ function generate(handler: string) {
     }
 }
 
-const handlers = ['format', 'recur_format', 'compress', 'stringify', 'parse']
-const [format, recurFormat, compress, stringify, parse] = handlers.map(handler => generate(handler))
+const handlers = ['format', 'recur_format', 'compress', 'stringify', 'parse', 'sort_format']
+const [format, recurFormat, compress, stringify, parse, sortFormat] = handlers.map(handler => generate(handler))
 
 const JsonTool: React.FC = () => {
     const editorRef = useRef<EditorInstance>(null)
@@ -51,6 +51,10 @@ const JsonTool: React.FC = () => {
         setValue(await parse(getValue()))
     }
 
+    const fn6 = async () => {
+        setValue(await sortFormat(getValue()))
+    }
+
     return (
         <div id="container">
             <div className="button-container">
@@ -59,7 +63,7 @@ const JsonTool: React.FC = () => {
                 <button onClick={fn3}>Compress</button>
                 <button onClick={fn4}>Escape</button>
                 <button onClick={fn5}>Unescape</button>
-                <button onClick={() => console.log(editorRef.current?.value)}>Print</button>
+                <button onClick={fn6}>Sort</button>
             </div>
             <div className="editor-container">
                 <Editor ref={editorRef}/>
