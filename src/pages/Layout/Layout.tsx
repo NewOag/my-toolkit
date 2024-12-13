@@ -2,6 +2,7 @@ import "./Layout.less"
 import React, {useState} from 'react'
 import JsonTool from '../JsonTool/JsonTool.tsx'
 import KafkaTool from '../KafkaTool/KafkaTool.tsx'
+import DiffTool from '../DiffTool/DiffTool.tsx'
 
 interface ILayout {
 
@@ -9,6 +10,7 @@ interface ILayout {
 
 const json = <JsonTool/>
 const kafka = <KafkaTool/>
+const diff = <DiffTool/>
 
 
 const Layout: React.FC<ILayout> = ({}) => {
@@ -22,8 +24,9 @@ const Layout: React.FC<ILayout> = ({}) => {
 
     return <div className="layout-container">
         <div className="left-bar-container">
-            <div className="tool-icon json-icon" onClick={changeTool(json)}></div>
-            <div className="tool-icon kafka-icon" onClick={changeTool(kafka)}></div>
+            <div className="tool-icon json-tool" onClick={changeTool(json)}></div>
+            <div className="tool-icon diff-tool" onClick={changeTool(diff)}></div>
+            <div className="tool-icon kafka-tool" onClick={changeTool(kafka)}></div>
         </div>
         <div className="right-bar-container"></div>
         <div className="top-bar-container"></div>

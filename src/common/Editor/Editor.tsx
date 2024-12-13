@@ -5,6 +5,7 @@ import {json, jsonParseLinter} from '@codemirror/lang-json'
 import {codeFolding, unfoldEffect} from '@codemirror/language'
 import {linter} from '@codemirror/lint'
 import './Editor.less'
+import {MergeView} from '@codemirror/merge'
 
 export interface EditorInstance {
     get value(): string;
@@ -48,6 +49,26 @@ const foldConfig = {
     }
 }
 
+const theme = EditorView.theme({
+    ".cm-holder": {
+        color: '#20202050',
+        'font-style': 'italic'
+    },
+    ".cm-holder:hover": {
+        cursor: 'pointer'
+    },
+    "&.cm-focused": {
+        outline: "none"
+    },
+    ".cm-scroller": {
+        "scrollbar-width": "none"
+    },
+    ".cm-scroller::-webkit-scrollbar": {
+        width: 0,
+        height: 0
+    }
+})
+
 const Editor0: React.ForwardRefRenderFunction<EditorInstance, IEditor> = ({value, onChange}, ref) => {
     const containerRef = useRef(null)
     const [editorView, setEditorView] = useState<EditorView>()
@@ -60,26 +81,7 @@ const Editor0: React.ForwardRefRenderFunction<EditorInstance, IEditor> = ({value
                 EditorState.transactionFilter.of(tr => {
                     console.debug("tr is ", tr)
                     return tr
-                }),
-                EditorView.theme({
-                    ".cm-holder": {
-                        color: '#20202050',
-                        'font-style': 'italic'
-                    },
-                    ".cm-holder:hover": {
-                        cursor: 'pointer'
-                    },
-                    "&.cm-focused": {
-                        outline: "none"
-                    },
-                    ".cm-scroller": {
-                        "scrollbar-width": "none"
-                    },
-                    ".cm-scroller::-webkit-scrollbar": {
-                        width: 0,
-                        height: 0
-                    }
-                })
+                }), theme
             ],
         })
         const view = new EditorView({
@@ -114,3 +116,75 @@ const Editor0: React.ForwardRefRenderFunction<EditorInstance, IEditor> = ({value
 }
 
 export const Editor = forwardRef(Editor0)
+
+export interface DiffEditorInstance {
+    get value(): string;
+
+    set value(v: string);
+}
+
+export interface IDiffEditor {
+    value?: string
+    onChange?: (value: string) => void
+}
+
+const DiffEditor0: React.ForwardRefRenderFunction<DiffEditorInstance, IDiffEditor> = ({value, onChange}, ref) => {
+    const containerRef = useRef(null)
+    const [editorView, setEditorView] = useState<MergeView>()
+    useEffect(() => {
+        const mergeView = new MergeView({
+            a: {
+                doc: value, extensions: [
+                    basicSetup, json(), linter(jsonParseLinter()), changeFacet(onChange),
+                    codeFolding(foldConfig),
+                    // todo format on user paste
+                    EditorState.transactionFilter.of(tr => {
+                        console.debug("tr is ", tr)
+                        return tr
+                    }),
+                    theme
+                ],
+            },
+            b: {
+                doc: value, extensions: [
+                    basicSetup, json(), linter(jsonParseLinter()), changeFacet(onChange),
+                    codeFolding(foldConfig),
+                    // todo format on user paste
+                    EditorState.transactionFilter.of(tr => {
+                        console.debug("tr is ", tr)
+                        return tr
+                    }),
+                    theme
+                ],
+            },
+            parent: containerRef.current!
+        })
+        setEditorView(mergeView)
+        return () => mergeView.destroy()
+    }, [])
+
+    const changeValue = (str: string) => {
+        editorView?.a?.dispatch({
+            changes: {
+                from: 0,
+                to: editorView.a.state.doc.length,
+                insert: str
+            }
+        })
+    }
+
+    const editor: EditorInstance = new class implements EditorInstance {
+        get value(): string {
+            return editorView?.a.state.doc.toString()!
+        }
+
+        set value(str) {
+            changeValue(str)
+        }
+    }
+    useImperativeHandle(ref, () => editor)
+
+    return <div ref={containerRef} className="code-editor"/>
+}
+
+export const DiffEditor = forwardRef(DiffEditor0)
