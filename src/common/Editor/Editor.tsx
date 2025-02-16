@@ -118,9 +118,8 @@ const Editor0: React.ForwardRefRenderFunction<EditorInstance, IEditor> = ({value
 export const Editor = forwardRef(Editor0)
 
 export interface DiffEditorInstance {
-    get value(): string;
-
-    set value(v: string);
+    left: EditorInstance
+    right: EditorInstance
 }
 
 export interface IDiffEditor {
@@ -135,7 +134,7 @@ const DiffEditor0: React.ForwardRefRenderFunction<DiffEditorInstance, IDiffEdito
         const mergeView = new MergeView({
             a: {
                 doc: value, extensions: [
-                    basicSetup, json(), linter(jsonParseLinter()), changeFacet(onChange),
+                    basicSetup, changeFacet(onChange),
                     codeFolding(foldConfig),
                     // todo format on user paste
                     EditorState.transactionFilter.of(tr => {
@@ -147,7 +146,7 @@ const DiffEditor0: React.ForwardRefRenderFunction<DiffEditorInstance, IDiffEdito
             },
             b: {
                 doc: value, extensions: [
-                    basicSetup, json(), linter(jsonParseLinter()), changeFacet(onChange),
+                    basicSetup, changeFacet(onChange),
                     codeFolding(foldConfig),
                     // todo format on user paste
                     EditorState.transactionFilter.of(tr => {
@@ -163,7 +162,7 @@ const DiffEditor0: React.ForwardRefRenderFunction<DiffEditorInstance, IDiffEdito
         return () => mergeView.destroy()
     }, [])
 
-    const changeValue = (str: string) => {
+    const changeAValue = (str: string) => {
         editorView?.a?.dispatch({
             changes: {
                 from: 0,
@@ -173,15 +172,37 @@ const DiffEditor0: React.ForwardRefRenderFunction<DiffEditorInstance, IDiffEdito
         })
     }
 
-    const editor: EditorInstance = new class implements EditorInstance {
-        get value(): string {
-            return editorView?.a.state.doc.toString()!
-        }
+    const changeBValue = (str: string) => {
+        editorView?.b?.dispatch({
+            changes: {
+                from: 0,
+                to: editorView.b.state.doc.length,
+                insert: str
+            }
+        })
+    }
 
-        set value(str) {
-            changeValue(str)
+    const editor = {
+        left: new class implements EditorInstance {
+            get value(): string {
+                return editorView?.a.state.doc.toString()!
+            }
+
+            set value(str) {
+                changeAValue(str)
+            }
+        },
+        right: new class implements EditorInstance {
+            get value(): string {
+                return editorView?.b.state.doc.toString()!
+            }
+
+            set value(str) {
+                changeBValue(str)
+            }
         }
     }
+
     useImperativeHandle(ref, () => editor)
 
     return <div ref={containerRef} className="code-editor"/>
