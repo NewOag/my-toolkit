@@ -132,6 +132,9 @@ const DiffEditor0: React.ForwardRefRenderFunction<DiffEditorInstance, IDiffEdito
     const [editorView, setEditorView] = useState<MergeView>()
     useEffect(() => {
         const mergeView = new MergeView({
+            diffConfig: {
+               scanLimit: 3000
+            },
             a: {
                 doc: value, extensions: [
                     basicSetup, changeFacet(onChange),
