@@ -1,4 +1,7 @@
-use sonic_rs::{from_str, to_string, to_string_pretty, Error, JsonType, JsonValueMutTrait, JsonValueTrait, Value};
+use sonic_rs::{
+    from_str, to_string, to_string_pretty, Error, JsonType, JsonValueMutTrait, JsonValueTrait,
+    Value,
+};
 
 #[tauri::command]
 pub fn format(str: &str) -> String {
@@ -55,7 +58,11 @@ pub fn parse(str: &str) -> String {
         return str.to_string();
     }
     let value = result.unwrap();
-    if value.is_str() { value.as_str().unwrap().to_string() } else { str.to_string() }
+    if value.is_str() {
+        value.as_str().unwrap().to_string()
+    } else {
+        str.to_string()
+    }
 }
 
 fn recur_sort(mut json: &mut Value) {
@@ -65,7 +72,7 @@ fn recur_sort(mut json: &mut Value) {
             for v in arr.iter_mut() {
                 recur_sort(v);
             }
-            arr.sort_by_key(|obj| { to_string(obj).unwrap() })
+            arr.sort_by_key(|obj| to_string(obj).unwrap())
         }
         JsonType::Object => {
             let mut obj = json.as_object_mut().unwrap();
@@ -74,7 +81,20 @@ fn recur_sort(mut json: &mut Value) {
                 recur_sort(v);
                 entries.push((k, v.take()));
             }
-            entries.sort_by_key(|(k, _v)| k.clone());
+            // 按值类型排序（数字< 对象 < 字符串< 布尔 < 数组 < null）
+            // 通过实现自定义排序策略
+            entries.sort_by_key(|(k, v)| {
+                // 获取自定义类型顺序权重
+                let type_order = match v.get_type() {
+                    JsonType::String => 0,
+                    JsonType::Null => 1,
+                    JsonType::Number => 2,
+                    JsonType::Boolean => 3,
+                    JsonType::Object => 4,
+                    JsonType::Array => 5,
+                };
+                (type_order, k.clone())
+            });
             let mut object = sonic_rs::Object::new();
             for (k, v) in entries {
                 object.insert(&k, v);
