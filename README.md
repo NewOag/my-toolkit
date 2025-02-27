@@ -2,8 +2,8 @@
 
 ## todos
 
-- [ ] json tool
-- [ ] diff tool
+- [x] json tool
+- [x] diff tool
 - [ ] kafka tool
 - [ ] GitHub action to publish
 
