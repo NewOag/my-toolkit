@@ -24,7 +24,7 @@
 - [x] json format/pro
 - [x] json escape/unescape
 - [x] json compress
-- [ ] json comparator
+- [x] json comparator
 - [ ] beautiful style
 - [ ] layout fix
 - [ ] after format json, cursor should be 0
