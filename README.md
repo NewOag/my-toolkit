@@ -34,3 +34,9 @@
 - [ ] read from file
 - [ ] drop file to read
 - [ ] check windows scroller behavior
+
+# Quick Start
+
+```bash
+sudo xattr -d com.apple.quarantine /Applications/my-toolkit.app
+```
