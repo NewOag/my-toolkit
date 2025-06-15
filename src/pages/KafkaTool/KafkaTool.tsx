@@ -1,8 +1,7 @@
 import "./KafkaTool.less"
 import React, {useEffect, useRef} from 'react'
-import {invoke} from '@tauri-apps/api'
 import {Editor, EditorInstance} from '../../common/Editor/Editor.tsx'
-
+import {invoke} from '@tauri-apps/api/core'
 
 async function topics(hosts: string) {
     const metadata = await invoke("topics", {hosts})

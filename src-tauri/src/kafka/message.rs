@@ -24,7 +24,7 @@ impl<'a> From<kafka::client::fetch::Message<'a>> for Message<'a> {
         }
     }
 }
-impl <'a> From<&kafka::consumer::Message<'a>> for Message<'a> {
+impl<'a> From<&kafka::consumer::Message<'a>> for Message<'a> {
     fn from(value: &kafka::consumer::Message<'a>) -> Self {
         Message {
             key: value.key,

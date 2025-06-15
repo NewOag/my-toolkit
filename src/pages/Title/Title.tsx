@@ -1,6 +1,7 @@
 import "./Title.less"
 import {useEffect} from 'react'
-import {appWindow} from '@tauri-apps/api/window'
+import {getCurrentWebviewWindow} from '@tauri-apps/api/webviewWindow'
+const appWindow = getCurrentWebviewWindow()
 
 function Title() {
 

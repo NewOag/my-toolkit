@@ -1,3 +1,1 @@
-struct Connection {
-
-}
+struct Connection {}

@@ -2,7 +2,7 @@ import "./JsonTool.less";
 import {Editor, EditorInstance} from '../../common/Editor/Editor.tsx'
 import React, {useRef} from 'react'
 
-import {invoke} from '@tauri-apps/api'
+import {invoke} from '@tauri-apps/api/core'
 
 function generate(handler: string) {
     return async function (str: string): Promise<string> {

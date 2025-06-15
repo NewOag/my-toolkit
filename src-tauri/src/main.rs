@@ -1,61 +1,99 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use crate::json::{compress, format, parse, recur_format, sort_format, stringify};
 use crate::kafka::{fetch_message, send_message, topics};
-use tauri::{GlobalWindowEvent, Manager, WindowMenuEvent};
-use crate::json::{format, recur_format, compress, stringify, parse, sort_format};
+use tauri::menu::{CheckMenuItem, MenuBuilder, MenuEvent, MenuItem};
+use tauri::{Manager, Window, WindowEvent};
 
+mod json;
 mod kafka;
 mod storage;
-mod json;
 
-fn handle_window_event(event: GlobalWindowEvent) {
-    if let tauri::WindowEvent::CloseRequested { api, .. } = event.event() {
+fn handle_window_event_fn(window: &Window) -> impl Fn(&WindowEvent) + Send + Sync + use<'_> {
+    |event| {
+        if let tauri::WindowEvent::CloseRequested { api, .. } = event {
+            #[cfg(not(target_os = "macos"))]
+            {
+                window.hide().unwrap();
+            }
+
+            #[cfg(target_os = "macos")]
+            {
+                window.hide().unwrap();
+            }
+            api.prevent_close();
+        }
+    }
+}
+
+fn handle_window_event(window: &Window, event: &WindowEvent) {
+    if let tauri::WindowEvent::CloseRequested { api, .. } = event {
         #[cfg(not(target_os = "macos"))]
         {
-            event.window().hide().unwrap();
+            window.hide().unwrap();
         }
 
         #[cfg(target_os = "macos")]
         {
-            tauri::AppHandle::hide(&event.window().app_handle()).unwrap();
+            window.hide().unwrap();
         }
         api.prevent_close();
     }
 }
 
-fn handle_menu_event(event: WindowMenuEvent) {
-    match event.menu_item_id() {
-        "quit" => {
-            std::process::exit(0);
-        }
-        "close" => {
-            event.window().close().unwrap();
-        }
-        _ => {}
+fn handle_menu_event(window: &Window, event: MenuEvent) {
+    if event.id() == "quit" {
+        std::process::exit(0);
+    }
+    if event.id() == "close" {
+        window.hide().unwrap();
     }
 }
 
 fn main() {
-    use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
-    // 这里 `"quit".to_string()` 定义菜单项 ID，第二个参数是菜单项标签。
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-    let close = CustomMenuItem::new("close".to_string(), "Close");
-    let submenu = Submenu::new("File", Menu::new().add_item(quit).add_item(close));
-    let menu = Menu::new()
-        .add_native_item(MenuItem::Copy)
-        .add_item(CustomMenuItem::new("hide", "Hide"))
-        .add_submenu(submenu);
-
     tauri::Builder::default()
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_http::init())
+        .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_os::init())
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+        .plugin(tauri_plugin_notification::init())
         // todo 加上了会导致复制粘贴快捷键失效
         // .menu(menu)
-        .on_menu_event(handle_menu_event)
-        .on_window_event(handle_window_event)
         .invoke_handler(tauri::generate_handler![
-            topics,send_message,fetch_message,
-            format, recur_format, compress, stringify, parse, sort_format
+            topics,
+            send_message,
+            fetch_message,
+            format,
+            recur_format,
+            compress,
+            stringify,
+            parse,
+            sort_format
         ])
+        .setup(move |app| {
+            let handle = app.handle();
+            let menu = MenuBuilder::new(handle)
+                .text("quit", "Quit")
+                .text("close", "Close")
+                .items(&[
+                    &CheckMenuItem::new(handle, "CheckMenuItem 1", true, true, None::<&str>)?,
+                    &MenuItem::new(handle, "MenuItem 1", true, None::<&str>)?,
+                ])
+                .build()?;
+            app.set_menu(menu)?;
+
+            let window = app.get_focused_window().expect("无法获取主窗口");
+            window.on_menu_event(|window: &Window, event: MenuEvent| {
+                handle_menu_event(window, event)
+            });
+            Ok(())
+        })
+        .on_window_event(handle_window_event)
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

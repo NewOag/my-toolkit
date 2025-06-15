@@ -1,7 +1,7 @@
 import './DiffTool.less'
 import React, {useRef} from 'react'
 import {DiffEditor, DiffEditorInstance} from '../../common/Editor/Editor.tsx'
-import {invoke} from '@tauri-apps/api'
+import {invoke} from '@tauri-apps/api/core'
 
 function generate(handler: string) {
     return async function (str: string): Promise<string> {
