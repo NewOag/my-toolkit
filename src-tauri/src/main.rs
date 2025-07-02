@@ -3,7 +3,6 @@
 
 use crate::json::{compress, format, parse, recur_format, sort_format, stringify};
 use crate::kafka::{fetch_message, send_message, topics};
-use tauri::menu::MenuEvent;
 use tauri::{Window, WindowEvent};
 
 mod json;

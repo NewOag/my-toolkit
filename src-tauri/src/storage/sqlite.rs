@@ -1,12 +1,14 @@
 use rusqlite::{Connection, Result};
 
 #[derive(Debug)]
+#[allow(dead_code)]
 struct Person {
     id: i32,
     name: String,
     data: Option<Vec<u8>>,
 }
 
+#[allow(dead_code)]
 pub fn init_config() -> Result<()> {
     let conn = Connection::open_in_memory()?;
 

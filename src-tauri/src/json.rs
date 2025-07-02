@@ -65,7 +65,7 @@ pub fn parse(str: &str) -> String {
     }
 }
 
-fn recur_sort(mut json: &mut Value) {
+fn recur_sort(json: &mut Value) {
     match json.get_type() {
         JsonType::Array => {
             let arr = json.as_array_mut().unwrap();
@@ -75,7 +75,7 @@ fn recur_sort(mut json: &mut Value) {
             arr.sort_by_key(|obj| to_string(obj).unwrap())
         }
         JsonType::Object => {
-            let mut obj = json.as_object_mut().unwrap();
+            let obj = json.as_object_mut().unwrap();
             let mut entries = vec![];
             for (k, v) in obj.iter_mut() {
                 recur_sort(v);
@@ -93,7 +93,7 @@ fn recur_sort(mut json: &mut Value) {
                     JsonType::Object => 4,
                     JsonType::Array => 5,
                 };
-                (type_order, k.clone())
+                (type_order, k);
             });
             let mut object = sonic_rs::Object::new();
             for (k, v) in entries {
