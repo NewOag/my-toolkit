@@ -3,29 +3,12 @@
 
 use crate::json::{compress, format, parse, recur_format, sort_format, stringify};
 use crate::kafka::{fetch_message, send_message, topics};
-use tauri::menu::{CheckMenuItem, MenuBuilder, MenuEvent, MenuItem};
-use tauri::{Manager, Window, WindowEvent};
+use tauri::menu::MenuEvent;
+use tauri::{Window, WindowEvent};
 
 mod json;
 mod kafka;
 mod storage;
-
-fn handle_window_event_fn(window: &Window) -> impl Fn(&WindowEvent) + Send + Sync + use<'_> {
-    |event| {
-        if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-            #[cfg(not(target_os = "macos"))]
-            {
-                window.hide().unwrap();
-            }
-
-            #[cfg(target_os = "macos")]
-            {
-                window.hide().unwrap();
-            }
-            api.prevent_close();
-        }
-    }
-}
 
 fn handle_window_event(window: &Window, event: &WindowEvent) {
     if let tauri::WindowEvent::CloseRequested { api, .. } = event {
@@ -42,15 +25,6 @@ fn handle_window_event(window: &Window, event: &WindowEvent) {
     }
 }
 
-fn handle_menu_event(window: &Window, event: MenuEvent) {
-    if event.id() == "quit" {
-        std::process::exit(0);
-    }
-    if event.id() == "close" {
-        window.hide().unwrap();
-    }
-}
-
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
@@ -60,7 +34,6 @@ fn main() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_os::init())
-        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_notification::init())
         // todo 加上了会导致复制粘贴快捷键失效
         // .menu(menu)
@@ -75,24 +48,6 @@ fn main() {
             parse,
             sort_format
         ])
-        .setup(move |app| {
-            let handle = app.handle();
-            let menu = MenuBuilder::new(handle)
-                .text("quit", "Quit")
-                .text("close", "Close")
-                .items(&[
-                    &CheckMenuItem::new(handle, "CheckMenuItem 1", true, true, None::<&str>)?,
-                    &MenuItem::new(handle, "MenuItem 1", true, None::<&str>)?,
-                ])
-                .build()?;
-            app.set_menu(menu)?;
-
-            let window = app.get_focused_window().expect("无法获取主窗口");
-            window.on_menu_event(|window: &Window, event: MenuEvent| {
-                handle_menu_event(window, event)
-            });
-            Ok(())
-        })
         .on_window_event(handle_window_event)
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
