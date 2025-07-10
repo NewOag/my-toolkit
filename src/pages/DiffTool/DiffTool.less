@@ -1,39 +1,21 @@
-#container {
-  display: flex;
-  flex-direction: column;
+@import '../../styles/common.less';
 
-  width: 100%;
-  height: 100%;
+// DiffTool 特定样式
+.tool-container {
+  .tool-header .tool-icon {
+    background: #4db656 !important;
+  }
 
-  .button-container {
-    min-height: 4%;
-    margin-left: 1%;
-    margin-right: 1%;
-    margin-top: 2px;
+  .editor-hint {
+    font-size: 12px;
+    color: @text-muted;
+    margin-left: auto;
+    font-style: italic;
+  }
 
+  .section-title {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-
-    border: #dddddd solid 1px;
-
-    button {
-      flex: 1;
-      height: 100%;
-
-      padding: 0;
-      border: #dddddd solid 1px;
-      background: #dddddd20;
-      cursor: pointer;
-    }
-
+    gap: @spacing-sm;
   }
-
-  .editor-container {
-    height: 93%;
-    width: 93vw;
-    margin: 1%;
-    border: solid #dddddd 2px;
-  }
-
 }

@@ -1,0 +1,356 @@
+// 设计系统变量
+@primary-color: #667eea;
+@primary-hover: #5a6fd8;
+@primary-active: #4c63d2;
+@secondary-color: #f093fb;
+@success-color: #4ecdc4;
+@warning-color: #fce38a;
+@error-color: #ff6b6b;
+@info-color: #74b9ff;
+
+@bg-primary: #ffffff;
+@bg-secondary: #f8fafc;
+@bg-tertiary: #e2e8f0;
+@bg-dark: #2d3748;
+
+@text-primary: #2d3748;
+@text-secondary: #4a5568;
+@text-muted: #718096;
+@text-white: #ffffff;
+
+@border-color: #e2e8f0;
+@border-radius: 8px;
+@border-radius-sm: 4px;
+@border-radius-lg: 12px;
+
+@shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+@shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+@shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+@spacing-xs: 4px;
+@spacing-sm: 8px;
+@spacing-md: 16px;
+@spacing-lg: 24px;
+@spacing-xl: 32px;
+
+// 通用容器样式
+.tool-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: @bg-secondary;
+  padding: @spacing-md;
+  gap: @spacing-md;
+}
+
+// 工具头部样式
+.tool-header {
+  background: @bg-primary;
+  border-radius: @border-radius;
+  padding: @spacing-md;
+  box-shadow: @shadow-sm;
+  border: 1px solid @border-color;
+
+  .tool-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: @text-primary;
+    margin: 0 0 @spacing-sm 0;
+    display: flex;
+    align-items: center;
+    gap: @spacing-sm;
+
+    .tool-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: @border-radius-sm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: @text-white;
+    }
+  }
+
+  .tool-description {
+    color: @text-secondary;
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+// 输入控制区域样式
+.input-section {
+  background: @bg-primary;
+  border-radius: @border-radius;
+  padding: @spacing-md;
+  box-shadow: @shadow-sm;
+  border: 1px solid @border-color;
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: @text-primary;
+    margin: 0 0 @spacing-md 0;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: @spacing-sm;
+    margin-bottom: @spacing-md;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 500;
+      color: @text-secondary;
+      margin-bottom: @spacing-xs;
+    }
+
+    input {
+      padding: @spacing-sm @spacing-md;
+      border: 1px solid @border-color;
+      border-radius: @border-radius-sm;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      background: @bg-primary;
+
+      &:focus {
+        outline: none;
+        border-color: @primary-color;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      &::placeholder {
+        color: @text-muted;
+      }
+    }
+  }
+
+  .input-row {
+    display: flex;
+    gap: @spacing-md;
+
+    .input-group {
+      flex: 1;
+    }
+  }
+}
+
+// 按钮区域样式
+.button-section {
+  background: @bg-primary;
+  border-radius: @border-radius;
+  padding: @spacing-md;
+  box-shadow: @shadow-sm;
+  border: 1px solid @border-color;
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: @text-primary;
+    margin: 0 0 @spacing-md 0;
+  }
+
+  .button-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: @spacing-sm;
+  }
+
+  .button-row {
+    display: flex;
+    gap: @spacing-sm;
+    flex-wrap: wrap;
+  }
+}
+
+// 统一按钮样式
+.btn {
+  padding: @spacing-sm @spacing-md;
+  border: none;
+  border-radius: @border-radius-sm;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: @spacing-xs;
+  min-height: 40px;
+  position: relative;
+  overflow: hidden;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  // 按钮悬停效果
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  // 主要按钮
+  &.btn-primary {
+    background: linear-gradient(135deg, @primary-color, @secondary-color);
+    color: @text-white;
+    box-shadow: @shadow-sm;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: @shadow-md;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  // 次要按钮
+  &.btn-secondary {
+    background: @bg-tertiary;
+    color: @text-primary;
+    border: 1px solid @border-color;
+
+    &:hover {
+      background: @border-color;
+      transform: translateY(-1px);
+    }
+  }
+
+  // 成功按钮
+  &.btn-success {
+    background: linear-gradient(135deg, @success-color, #26d0ce);
+    color: @text-white;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: @shadow-md;
+    }
+  }
+
+  // 警告按钮
+  &.btn-warning {
+    background: linear-gradient(135deg, @warning-color, #f8c291);
+    color: @text-primary;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: @shadow-md;
+    }
+  }
+
+  // 错误按钮
+  &.btn-danger {
+    background: linear-gradient(135deg, @error-color, #ff5252);
+    color: @text-white;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: @shadow-md;
+    }
+  }
+
+  // 信息按钮
+  &.btn-info {
+    background: linear-gradient(135deg, @info-color, #0984e3);
+    color: @text-white;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: @shadow-md;
+    }
+  }
+}
+
+// 编辑器容器样式
+.editor-section {
+  flex: 1;
+  background: @bg-primary;
+  border-radius: @border-radius;
+  padding: @spacing-md;
+  box-shadow: @shadow-sm;
+  border: 1px solid @border-color;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; // 重要：允许 flex 子项收缩
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: @text-primary;
+    margin: 0 0 @spacing-md 0;
+  }
+
+  .editor-container {
+    flex: 1;
+    border-radius: @border-radius-sm;
+    overflow: hidden;
+    border: 1px solid @border-color;
+    min-height: 0; // 重要：允许编辑器收缩
+  }
+}
+
+// 状态指示器
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: @spacing-xs;
+  padding: @spacing-xs @spacing-sm;
+  border-radius: @border-radius-sm;
+  font-size: 12px;
+  font-weight: 500;
+
+  &.status-success {
+    background: rgba(78, 205, 196, 0.1);
+    color: @success-color;
+  }
+
+  &.status-error {
+    background: rgba(255, 107, 107, 0.1);
+    color: @error-color;
+  }
+
+  &.status-warning {
+    background: rgba(252, 227, 138, 0.1);
+    color: darken(@warning-color, 20%);
+  }
+
+  &.status-info {
+    background: rgba(116, 185, 255, 0.1);
+    color: @info-color;
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .tool-container {
+    padding: @spacing-sm;
+    gap: @spacing-sm;
+  }
+
+  .input-row {
+    flex-direction: column;
+  }
+
+  .button-grid {
+    grid-template-columns: 1fr;
+  }
+} 
