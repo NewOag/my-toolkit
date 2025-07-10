@@ -1,10 +1,20 @@
-body {
+* {
+    box-sizing: border-box;
+}
+
+html, body {
     margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* 防止滚动条 */
 }
 
 :root {
     width: 100vw;
     height: 100vh;
+    min-width: 320px; /* 最小宽度 */
+    min-height: 240px; /* 最小高度 */
 
     font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
     font-size: 16px;
@@ -24,8 +34,26 @@ body {
 #root {
     width: 100vw;
     height: 100vh;
+    min-width: 320px;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
 }
 
+/* 响应式字体大小 */
+@media (max-width: 768px) {
+    :root {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        font-size: 12px;
+    }
+}
+
+/* 暗色主题 */
 @media (prefers-color-scheme: dark) {
     :root {
         color: #f6f6f6;

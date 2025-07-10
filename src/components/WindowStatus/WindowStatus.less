@@ -1,0 +1,76 @@
+@import '../../styles/common.less';
+
+.window-status {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid @border-color;
+  border-radius: @border-radius;
+  padding: @spacing-sm;
+  box-shadow: @shadow-lg;
+  z-index: 1000;
+  min-width: 180px;
+  backdrop-filter: blur(10px);
+
+  .window-status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: @spacing-sm;
+
+    .window-status-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: @text-primary;
+    }
+
+    .window-status-size {
+      font-size: 11px;
+      color: @text-muted;
+      font-family: monospace;
+    }
+  }
+
+  .window-status-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: @spacing-xs;
+
+    .badge {
+      padding: 2px 6px;
+      border-radius: @border-radius-sm;
+      font-size: 10px;
+      font-weight: 500;
+      color: @text-white;
+
+      &.badge-mobile {
+        background: @error-color;
+      }
+
+      &.badge-tablet {
+        background: @warning-color;
+        color: @text-primary;
+      }
+
+      &.badge-desktop {
+        background: @success-color;
+      }
+
+      &.badge-small-height {
+        background: @info-color;
+      }
+
+      &.badge-very-small-height {
+        background: @primary-color;
+      }
+    }
+  }
+}
+
+// 在小屏幕上隐藏状态显示
+@media (max-width: 480px) {
+  .window-status {
+    display: none;
+  }
+} 

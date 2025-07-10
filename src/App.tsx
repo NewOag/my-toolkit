@@ -1,9 +1,12 @@
 import "./App.less";
 import Layout from './pages/Layout/Layout.tsx'
-import { useEffect } from 'react';
+import WindowStatus from './components/WindowStatus/WindowStatus.tsx'
+import { useEffect, useState } from 'react';
 import { eventLogger } from './utils/EventLogger';
 
 function App() {
+    const [showWindowStatus, setShowWindowStatus] = useState(false);
+
     useEffect(() => {
         // 确保事件日志系统已初始化
         eventLogger.initialize().then(() => {
@@ -13,9 +16,26 @@ function App() {
             eventLogger.logFrontendEvent('app-mounted', {
                 timestamp: new Date().toISOString(),
                 userAgent: navigator.userAgent,
-                url: window.location.href
+                url: window.location.href,
+                windowSize: {
+                    width: window.innerWidth,
+                    height: window.innerHeight
+                }
             });
         });
+
+        // 监听键盘快捷键显示/隐藏窗口状态
+        const handleKeyDown = (event: KeyboardEvent) => {
+            // Ctrl/Cmd + Shift + W 切换窗口状态显示
+            if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'W') {
+                event.preventDefault();
+                setShowWindowStatus(prev => !prev);
+                eventLogger.logFrontendEvent('window-status-toggle', {
+                    visible: !showWindowStatus,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        };
 
         // 监听全局错误
         const handleError = (event: ErrorEvent) => {
@@ -62,6 +82,7 @@ function App() {
         };
 
         // 添加事件监听器
+        window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('error', handleError);
         window.addEventListener('unhandledrejection', handleUnhandledRejection);
         document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -71,6 +92,7 @@ function App() {
 
         // 清理函数
         return () => {
+            window.removeEventListener('keydown', handleKeyDown);
             window.removeEventListener('error', handleError);
             window.removeEventListener('unhandledrejection', handleUnhandledRejection);
             document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -83,10 +105,11 @@ function App() {
                 timestamp: new Date().toISOString()
             });
         };
-    }, []);
+    }, [showWindowStatus]);
 
     return <>
         <Layout/>
+        <WindowStatus visible={showWindowStatus} />
     </>
 }
 

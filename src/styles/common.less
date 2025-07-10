@@ -33,14 +33,19 @@
 @spacing-lg: 24px;
 @spacing-xl: 32px;
 
-// 通用容器样式
+// 通用容器样式 - 优化窗口适配
 .tool-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+  max-height: 100vh;
   background: @bg-secondary;
   padding: @spacing-md;
   gap: @spacing-md;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 // 工具头部样式
@@ -50,6 +55,7 @@
   padding: @spacing-md;
   box-shadow: @shadow-sm;
   border: 1px solid @border-color;
+  flex-shrink: 0; /* 防止收缩 */
 
   .tool-title {
     font-size: 20px;
@@ -69,6 +75,7 @@
       justify-content: center;
       font-size: 14px;
       color: @text-white;
+      flex-shrink: 0;
     }
   }
 
@@ -76,6 +83,7 @@
     color: @text-secondary;
     font-size: 14px;
     margin: 0;
+    line-height: 1.4;
   }
 }
 
@@ -86,6 +94,7 @@
   padding: @spacing-md;
   box-shadow: @shadow-sm;
   border: 1px solid @border-color;
+  flex-shrink: 0; /* 防止收缩 */
 
   .section-title {
     font-size: 16px;
@@ -118,6 +127,8 @@
       font-size: 14px;
       transition: all 0.2s ease;
       background: @bg-primary;
+      width: 100%;
+      box-sizing: border-box;
 
       &:focus {
         outline: none;
@@ -137,6 +148,7 @@
 
     .input-group {
       flex: 1;
+      min-width: 0; /* 允许收缩 */
     }
   }
 }
@@ -148,6 +160,7 @@
   padding: @spacing-md;
   box-shadow: @shadow-sm;
   border: 1px solid @border-color;
+  flex-shrink: 0; /* 防止收缩 */
 
   .section-title {
     font-size: 16px;
@@ -185,6 +198,8 @@
   min-height: 40px;
   position: relative;
   overflow: hidden;
+  flex: 1;
+  min-width: 0; /* 允许收缩 */
 
   &:disabled {
     opacity: 0.6;
@@ -280,9 +295,10 @@
   }
 }
 
-// 编辑器容器样式
+// 编辑器容器样式 - 关键优化
 .editor-section {
   flex: 1;
+  min-height: 0; /* 重要：允许 flex 子项收缩 */
   background: @bg-primary;
   border-radius: @border-radius;
   padding: @spacing-md;
@@ -290,21 +306,23 @@
   border: 1px solid @border-color;
   display: flex;
   flex-direction: column;
-  min-height: 0; // 重要：允许 flex 子项收缩
+  overflow: hidden;
 
   .section-title {
     font-size: 16px;
     font-weight: 600;
     color: @text-primary;
     margin: 0 0 @spacing-md 0;
+    flex-shrink: 0;
   }
 
   .editor-container {
     flex: 1;
+    min-height: 0; /* 重要：允许编辑器收缩 */
     border-radius: @border-radius-sm;
     overflow: hidden;
     border: 1px solid @border-color;
-    min-height: 0; // 重要：允许编辑器收缩
+    position: relative;
   }
 }
 
@@ -339,7 +357,22 @@
   }
 }
 
-// 响应式设计
+// 响应式设计 - 增强适配
+@media (max-width: 1024px) {
+  .tool-container {
+    padding: @spacing-sm;
+    gap: @spacing-sm;
+  }
+
+  .button-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+
+  .tool-header .tool-title {
+    font-size: 18px;
+  }
+}
+
 @media (max-width: 768px) {
   .tool-container {
     padding: @spacing-sm;
@@ -351,6 +384,77 @@
   }
 
   .button-grid {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  }
+
+  .button-row {
+    flex-direction: column;
+  }
+
+  .btn {
+    min-height: 36px;
+    font-size: 13px;
+  }
+
+  .tool-header .tool-title {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tool-container {
+    padding: @spacing-xs;
+    gap: @spacing-xs;
+  }
+
+  .button-grid {
     grid-template-columns: 1fr;
+  }
+
+  .btn {
+    min-height: 32px;
+    font-size: 12px;
+    padding: @spacing-xs @spacing-sm;
+  }
+
+  .tool-header .tool-title {
+    font-size: 14px;
+  }
+
+  .input-section,
+  .button-section,
+  .editor-section {
+    padding: @spacing-sm;
+  }
+}
+
+// 高度适配 - 处理极小窗口
+@media (max-height: 600px) {
+  .tool-container {
+    padding: @spacing-xs;
+    gap: @spacing-xs;
+  }
+
+  .tool-header {
+    padding: @spacing-sm;
+  }
+
+  .input-section,
+  .button-section {
+    padding: @spacing-sm;
+  }
+
+  .editor-section {
+    padding: @spacing-sm;
+  }
+}
+
+@media (max-height: 400px) {
+  .tool-header .tool-description {
+    display: none; /* 隐藏描述文本 */
+  }
+
+  .section-title {
+    font-size: 14px !important;
   }
 } 

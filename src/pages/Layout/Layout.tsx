@@ -1,10 +1,11 @@
 import "./Layout.less"
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import JsonTool from '../JsonTool/JsonTool.tsx'
 import KafkaTool from '../KafkaTool/KafkaTool.tsx'
 import DiffTool from '../DiffTool/DiffTool.tsx'
 import EventViewer from '../EventViewer/EventViewer.tsx'
 import { eventLogger } from '../../utils/EventLogger'
+import { useResponsive } from '../../hooks/useWindowSize'
 
 interface ILayout {
 
@@ -17,6 +18,21 @@ const events = <EventViewer/>
 
 const Layout: React.FC<ILayout> = ({}) => {
     const [tool, setTool] = useState<React.ReactElement>(json)
+    const { width, height, isMobile, isTablet, isDesktop, isSmallHeight, isVerySmallHeight } = useResponsive()
+
+    // 监听窗口大小变化并记录
+    useEffect(() => {
+        eventLogger.logFrontendEvent('layout-resize', {
+            width,
+            height,
+            isMobile,
+            isTablet,
+            isDesktop,
+            isSmallHeight,
+            isVerySmallHeight,
+            timestamp: new Date().toISOString()
+        });
+    }, [width, height, isMobile, isTablet, isDesktop, isSmallHeight, isVerySmallHeight]);
 
     const changeTool = (nextTool: React.ReactElement, toolName: string) => {
         return () => {
@@ -24,6 +40,7 @@ const Layout: React.FC<ILayout> = ({}) => {
             eventLogger.logFrontendEvent('tool-switch', {
                 fromTool: getCurrentToolName(),
                 toTool: toolName,
+                windowSize: { width, height },
                 timestamp: new Date().toISOString()
             });
             
@@ -45,28 +62,44 @@ const Layout: React.FC<ILayout> = ({}) => {
         eventLogger.logFrontendEvent('tool-icon-click', {
             toolName,
             currentTool: getCurrentToolName(),
+            windowSize: { width, height },
+            deviceType: isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop',
             timestamp: new Date().toISOString()
         });
         
         return changeTool(nextTool, toolName);
     }
 
-    return <div className="layout-container">
+    // 根据窗口大小动态调整布局类名
+    const getLayoutClassName = () => {
+        let className = 'layout-container';
+        if (isMobile) className += ' layout-mobile';
+        if (isTablet) className += ' layout-tablet';
+        if (isDesktop) className += ' layout-desktop';
+        if (isSmallHeight) className += ' layout-small-height';
+        if (isVerySmallHeight) className += ' layout-very-small-height';
+        return className;
+    }
+
+    return <div className={getLayoutClassName()}>
         <div className="left-bar-container">
             <div 
                 className="tool-icon json-tool" 
                 onClick={handleToolClick('json', json)}
                 onMouseEnter={() => eventLogger.logFrontendEvent('tool-icon-hover', { tool: 'json' })}
+                title="JSON 工具"
             ></div>
             <div 
                 className="tool-icon diff-tool" 
                 onClick={handleToolClick('diff', diff)}
                 onMouseEnter={() => eventLogger.logFrontendEvent('tool-icon-hover', { tool: 'diff' })}
+                title="对比工具"
             ></div>
             <div 
                 className="tool-icon kafka-tool" 
                 onClick={handleToolClick('kafka', kafka)}
                 onMouseEnter={() => eventLogger.logFrontendEvent('tool-icon-hover', { tool: 'kafka' })}
+                title="Kafka 工具"
             ></div>
             <div 
                 className="tool-icon event-tool" 
