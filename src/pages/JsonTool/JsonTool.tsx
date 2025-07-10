@@ -184,7 +184,7 @@ const JsonTool: React.FC = () => {
                         disabled={isProcessing}
                         title="解析转义的 JSON 字符串"
                     >
-                        <span>🔓</span> 解析
+                        <span>🔓</span> 反转义
                     </button>
                     <button 
                         className="btn btn-danger"

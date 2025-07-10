@@ -1,4 +1,5 @@
 import { listen, Event } from '@tauri-apps/api/event';
+import { invoke } from '@tauri-apps/api/core';
 
 export interface EventLog {
   timestamp: string;
@@ -107,17 +108,24 @@ class EventLogger {
       this.logs = this.logs.slice(-500); // 保留最新的500条
     }
 
-    // 发送到后端日志系统（可选）
+    // 发送到后端日志系统
     this.sendToBackendLogger(eventLog);
   }
 
   // 发送事件到后端日志系统
-  private async sendToBackendLogger(_eventLog: EventLog): Promise<void> {
+  private async sendToBackendLogger(eventLog: EventLog): Promise<void> {
     try {
-      // 这里可以调用后端命令来记录事件
-      // await invoke('log_frontend_event', { event: eventLog });
+      // 调用后端命令来记录事件
+      await invoke('log_frontend_event', {
+        event: {
+          event_type: eventLog.eventType,
+          payload: eventLog.payload,
+          timestamp: eventLog.timestamp
+        }
+      });
     } catch (error) {
       // 静默处理，避免日志记录本身产生错误
+      console.debug('[EventLogger] 发送到后端失败:', error);
     }
   }
 

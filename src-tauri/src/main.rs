@@ -5,12 +5,23 @@ use crate::json::{compress, format, parse, recur_format, sort_format, stringify}
 use crate::kafka::{fetch_message, send_message, topics};
 use tauri::{Manager, Window, WindowEvent};
 use log;
-use std::fs;
+
 use std::path::PathBuf;
+use serde::{Deserialize, Serialize};
 
 mod json;
 mod kafka;
 mod storage;
+mod logger;
+
+use logger::DualLogger;
+
+#[derive(Debug, Serialize, Deserialize)]
+struct FrontendEvent {
+    event_type: String,
+    payload: serde_json::Value,
+    timestamp: String,
+}
 
 fn handle_window_event(window: &Window, event: &WindowEvent) {
     match event {
@@ -61,13 +72,18 @@ fn handle_window_event(window: &Window, event: &WindowEvent) {
 }
 
 #[tauri::command]
+fn log_frontend_event(event: FrontendEvent) -> Result<(), String> {
+    log::info!("前端事件: {} - {}", event.event_type, serde_json::to_string(&event.payload).unwrap_or_default());
+    Ok(())
+}
+
+#[tauri::command]
 fn get_log_file_path(app: tauri::AppHandle) -> Result<PathBuf, String> {
-    log::debug!("获取日志文件路径");
+    log::debug!("获取日志目录路径");
     match app.path().app_log_dir() {
         Ok(log_dir) => {
-            let path = log_dir.join("my-toolkit.log");
-            log::debug!("日志文件路径: {:?}", path);
-            Ok(path)
+            log::debug!("日志目录路径: {:?}", log_dir);
+            Ok(log_dir)
         }
         Err(e) => {
             log::error!("获取日志目录失败: {:?}", e);
@@ -77,41 +93,80 @@ fn get_log_file_path(app: tauri::AppHandle) -> Result<PathBuf, String> {
 }
 
 #[tauri::command]
-fn read_log_file(app: tauri::AppHandle) -> Result<String, String> {
-    log::info!("读取日志文件");
-    match app.path().app_log_dir() {
-        Ok(log_dir) => {
-            let log_path = log_dir.join("my-toolkit.log");
-            log::debug!("日志文件路径: {:?}", log_path);
-            
-            match fs::read_to_string(&log_path) {
-                Ok(content) => {
-                    log::info!("日志文件读取成功，大小: {} 字节", content.len());
-                    Ok(content)
-                }
-                Err(e) => {
-                    log::error!("读取日志文件失败: {:?}", e);
-                    Err(e.to_string())
-                }
+async fn read_log_file(app: tauri::AppHandle) -> Result<String, String> {
+    let log_dir = get_log_file_path(app)?;
+    let app_log_path = log_dir.join("app.log");
+    
+    match std::fs::read_to_string(&app_log_path) {
+        Ok(content) => Ok(content),
+        Err(e) => {
+            if e.kind() == std::io::ErrorKind::NotFound {
+                Ok("# 日志文件不存在\n\n应用日志文件尚未创建。\n".to_string())
+            } else {
+                Err(format!("读取日志文件失败: {}", e))
             }
         }
+    }
+}
+
+#[tauri::command]
+async fn read_specific_log_file(app: tauri::AppHandle, filename: String) -> Result<String, String> {
+    let log_dir = get_log_file_path(app)?;
+    let log_path = log_dir.join(&filename);
+    
+    match std::fs::read_to_string(&log_path) {
+        Ok(content) => Ok(content),
         Err(e) => {
-            log::error!("获取日志目录失败: {:?}", e);
-            Err(e.to_string())
+            if e.kind() == std::io::ErrorKind::NotFound {
+                Ok(format!("# 日志文件不存在\n\n文件 {} 尚未创建。\n", filename))
+            } else {
+                Err(format!("读取日志文件 {} 失败: {}", filename, e))
+            }
         }
+    }
+}
+
+#[tauri::command]
+async fn clear_log_file(app: tauri::AppHandle, filename: String) -> Result<(), String> {
+    let log_dir = get_log_file_path(app)?;
+    let log_path = log_dir.join(&filename);
+    
+    match std::fs::write(&log_path, "") {
+        Ok(_) => {
+            log::info!("日志文件 {} 已清除", filename);
+            Ok(())
+        },
+        Err(e) => Err(format!("清除日志文件 {} 失败: {}", filename, e))
     }
 }
 
 fn main() {
     tauri::Builder::default()
-        .plugin(
-            tauri_plugin_log::Builder::default()
-                .level(log::LevelFilter::Debug)
-                .build(),
-        )
-        .setup(|_app| {
+        .setup(|app| {
+            // 初始化自定义日志器
+            let log_dir = app.path().app_log_dir().unwrap_or_else(|_| {
+                std::env::current_dir().unwrap().join("logs")
+            });
+            
+            // 确保日志目录存在
+            if !log_dir.exists() {
+                if let Err(e) = std::fs::create_dir_all(&log_dir) {
+                    eprintln!("创建日志目录失败: {:?}", e);
+                }
+            }
+
+            let dual_logger = DualLogger::new(log_dir.clone())
+                .expect("初始化日志器失败");
+
+            // 设置全局日志器
+            log::set_boxed_logger(Box::new(dual_logger))
+                .expect("设置日志器失败");
+            log::set_max_level(log::LevelFilter::Debug);
+
             log::info!("应用设置阶段开始");
-            log::info!("使用 Tauri 官方日志插件");
+            log::info!("使用自定义双日志器");
+            log::info!("日志配置: app.log (所有日志), my-toolkit.log (交互事件)");
+            log::info!("日志目录: {:?}", log_dir);
             log::info!("应用启动完成，窗口事件监听已设置");
             Ok(())
         })
@@ -133,13 +188,15 @@ fn main() {
             stringify,
             parse,
             sort_format,
+            log_frontend_event,
             get_log_file_path,
-            read_log_file
+            read_log_file,
+            read_specific_log_file,
+            clear_log_file
         ])
         .on_window_event(handle_window_event)
         .run(tauri::generate_context!())
         .unwrap_or_else(|e| {
-            log::error!("应用运行失败: {:?}", e);
             eprintln!("error while running tauri application: {:?}", e);
             std::process::exit(1);
         });

@@ -1,0 +1,415 @@
+@import '../../styles/common.less';
+
+.log-viewer-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+  max-height: 100vh;
+  background: @bg-secondary;
+  padding: @spacing-md;
+  gap: @spacing-md;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.log-viewer-header {
+  background: @bg-primary;
+  border-radius: @border-radius;
+  padding: @spacing-md;
+  box-shadow: @shadow-sm;
+  border: 1px solid @border-color;
+  flex-shrink: 0;
+
+  .log-viewer-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: @text-primary;
+    margin: 0 0 @spacing-sm 0;
+    display: flex;
+    align-items: center;
+    gap: @spacing-sm;
+
+    .log-viewer-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: @border-radius-sm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: @text-white;
+      flex-shrink: 0;
+    }
+  }
+
+  .log-viewer-description {
+    color: @text-secondary;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.4;
+  }
+}
+
+.log-viewer-controls {
+  background: @bg-primary;
+  border-radius: @border-radius;
+  padding: @spacing-md;
+  box-shadow: @shadow-sm;
+  border: 1px solid @border-color;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: @spacing-md;
+
+  .file-selector {
+    display: flex;
+    align-items: center;
+    gap: @spacing-sm;
+
+    label {
+      font-size: 14px;
+      font-weight: 500;
+      color: @text-secondary;
+      white-space: nowrap;
+    }
+
+    select {
+      padding: @spacing-sm @spacing-md;
+      border: 1px solid @border-color;
+      border-radius: @border-radius-sm;
+      font-size: 14px;
+      background: @bg-primary;
+      min-width: 200px;
+      transition: all 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: @primary-color;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .control-buttons {
+    display: flex;
+    align-items: center;
+    gap: @spacing-sm;
+
+    .auto-refresh-toggle {
+      display: flex;
+      align-items: center;
+      gap: @spacing-xs;
+      font-size: 14px;
+      color: @text-secondary;
+      cursor: pointer;
+
+      input[type="checkbox"] {
+        margin: 0;
+        cursor: pointer;
+      }
+
+      span {
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.error-message {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid @error-color;
+  border-radius: @border-radius;
+  padding: @spacing-sm @spacing-md;
+  color: @error-color;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: @spacing-sm;
+  flex-shrink: 0;
+
+  button {
+    background: none;
+    border: none;
+    color: @error-color;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    margin-left: auto;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.log-file-info {
+  background: @bg-primary;
+  border-radius: @border-radius;
+  padding: @spacing-md;
+  box-shadow: @shadow-sm;
+  border: 1px solid @border-color;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: @spacing-md;
+
+  .file-stats {
+    display: flex;
+    gap: @spacing-lg;
+    font-size: 14px;
+    color: @text-secondary;
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: @spacing-xs;
+    }
+  }
+
+  .file-actions {
+    display: flex;
+    gap: @spacing-sm;
+  }
+}
+
+.log-content-container {
+  flex: 1;
+  min-height: 0;
+  background: @bg-primary;
+  border-radius: @border-radius;
+  padding: @spacing-md;
+  box-shadow: @shadow-sm;
+  border: 1px solid @border-color;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .log-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: @spacing-md;
+    flex-shrink: 0;
+
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: @text-primary;
+      margin: 0;
+    }
+
+    .log-file-name {
+      font-size: 12px;
+      color: @text-muted;
+      font-family: monospace;
+      background: @bg-secondary;
+      padding: @spacing-xs @spacing-sm;
+      border-radius: @border-radius-sm;
+    }
+  }
+
+  .log-content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid @border-color;
+    border-radius: @border-radius-sm;
+    background: @bg-dark;
+    position: relative;
+
+    .loading-message,
+    .no-file-message {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: @text-muted;
+      font-size: 16px;
+      gap: @spacing-sm;
+    }
+
+    .log-text {
+      margin: 0;
+      padding: @spacing-md;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #e2e8f0;
+      background: @bg-dark;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+
+      // 日志级别颜色
+      &::before {
+        content: '';
+        display: block;
+        height: 0;
+        overflow: hidden;
+      }
+
+      // 高亮错误日志
+      &:contains('[ERROR]') {
+        color: #ff6b6b;
+      }
+
+      // 高亮警告日志
+      &:contains('[WARN]') {
+        color: #fce38a;
+      }
+
+      // 高亮信息日志
+      &:contains('[INFO]') {
+        color: #74b9ff;
+      }
+
+      // 高亮调试日志
+      &:contains('[DEBUG]') {
+        color: #a8e6cf;
+      }
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 1024px) {
+  .log-viewer-container {
+    padding: @spacing-sm;
+    gap: @spacing-sm;
+  }
+
+  .log-viewer-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: @spacing-sm;
+
+    .file-selector {
+      justify-content: space-between;
+    }
+
+    .control-buttons {
+      justify-content: center;
+    }
+  }
+
+  .log-file-info {
+    flex-direction: column;
+    align-items: stretch;
+    gap: @spacing-sm;
+
+    .file-stats {
+      justify-content: space-between;
+    }
+
+    .file-actions {
+      justify-content: center;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .log-viewer-controls {
+    .file-selector {
+      flex-direction: column;
+      align-items: stretch;
+      gap: @spacing-xs;
+
+      select {
+        min-width: unset;
+      }
+    }
+
+    .control-buttons {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+
+  .log-file-info {
+    .file-stats {
+      flex-direction: column;
+      gap: @spacing-xs;
+    }
+
+    .file-actions {
+      flex-wrap: wrap;
+    }
+  }
+
+  .log-content-container {
+    .log-content-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: @spacing-xs;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .log-viewer-container {
+    padding: @spacing-xs;
+    gap: @spacing-xs;
+  }
+
+  .log-viewer-header {
+    padding: @spacing-sm;
+
+    .log-viewer-title {
+      font-size: 16px;
+    }
+  }
+
+  .log-viewer-controls,
+  .log-file-info,
+  .log-content-container {
+    padding: @spacing-sm;
+  }
+
+  .log-content {
+    .log-text {
+      font-size: 11px;
+      padding: @spacing-sm;
+    }
+  }
+}
+
+@media (max-height: 600px) {
+  .log-viewer-header {
+    padding: @spacing-sm;
+
+    .log-viewer-description {
+      display: none;
+    }
+  }
+
+  .log-file-info {
+    padding: @spacing-sm;
+
+    .file-stats {
+      font-size: 12px;
+    }
+  }
+}
+
+@media (max-height: 400px) {
+  .log-viewer-header {
+    .log-viewer-title {
+      font-size: 14px;
+    }
+  }
+
+  .log-viewer-controls {
+    padding: @spacing-xs;
+  }
+} 

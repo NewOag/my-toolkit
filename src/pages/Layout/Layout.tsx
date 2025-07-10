@@ -4,6 +4,7 @@ import JsonTool from '../JsonTool/JsonTool.tsx'
 import KafkaTool from '../KafkaTool/KafkaTool.tsx'
 import DiffTool from '../DiffTool/DiffTool.tsx'
 import EventViewer from '../EventViewer/EventViewer.tsx'
+import LogViewer from '../LogViewer/LogViewer.tsx'
 import { eventLogger } from '../../utils/EventLogger'
 import { useResponsive } from '../../hooks/useWindowSize'
 
@@ -15,6 +16,7 @@ const json = <JsonTool/>
 const kafka = <KafkaTool/>
 const diff = <DiffTool/>
 const events = <EventViewer/>
+const logs = <LogViewer/>
 
 const Layout: React.FC<ILayout> = ({}) => {
     const [tool, setTool] = useState<React.ReactElement>(json)
@@ -54,6 +56,7 @@ const Layout: React.FC<ILayout> = ({}) => {
         if (tool === kafka) return 'kafka';
         if (tool === diff) return 'diff';
         if (tool === events) return 'events';
+        if (tool === logs) return 'logs';
         return 'unknown';
     }
 
@@ -107,6 +110,12 @@ const Layout: React.FC<ILayout> = ({}) => {
                 onMouseEnter={() => eventLogger.logFrontendEvent('tool-icon-hover', { tool: 'events' })}
                 title="事件日志查看器"
             >📊</div>
+            <div 
+                className="tool-icon log-tool" 
+                onClick={handleToolClick('logs', logs)}
+                onMouseEnter={() => eventLogger.logFrontendEvent('tool-icon-hover', { tool: 'logs' })}
+                title="日志文件查看器"
+            >📋</div>
         </div>
         <div className="right-bar-container"></div>
         <div className="top-bar-container"></div>
