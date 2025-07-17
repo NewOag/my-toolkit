@@ -60,6 +60,14 @@ const theme = EditorView.theme({
     "&.cm-focused": {
         outline: "none"
     },
+    ".cm-content": {
+        fontSize: "14px",
+        lineHeight: "1.5",
+        fontFamily: "'Monaco', 'Menlo', 'Ubuntu Mono', monospace"
+    },
+    ".cm-editor": {
+        fontSize: "14px"
+    },
     ".cm-scroller": {
         "scrollbar-width": "none"
     },

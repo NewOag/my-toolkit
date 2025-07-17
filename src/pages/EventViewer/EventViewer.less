@@ -13,30 +13,30 @@
 
   .event-viewer-header {
     background: @bg-primary;
-    padding: @spacing-md;
+    padding: @spacing-sm;
     border-bottom: 1px solid @border-color;
     box-shadow: @shadow-sm;
     flex-shrink: 0;
 
     h2 {
-      margin: 0 0 @spacing-md 0;
+      margin: 0;
       color: @text-primary;
-      font-size: 20px;
+      font-size: 14px;
       font-weight: 600;
     }
 
     .controls {
       display: flex;
-      gap: @spacing-sm;
+      gap: @spacing-xs;
       align-items: center;
       flex-wrap: wrap;
 
       .filter-input {
-        padding: @spacing-sm @spacing-md;
+        padding: @spacing-xs @spacing-sm;
         border: 1px solid @border-color;
         border-radius: @border-radius-sm;
-        min-width: 200px;
-        font-size: 14px;
+        min-width: 150px;
+        font-size: 13px;
         transition: all 0.2s ease;
         box-sizing: border-box;
 
@@ -48,11 +48,11 @@
       }
 
       .source-filter {
-        padding: @spacing-sm @spacing-md;
+        padding: @spacing-xs @spacing-sm;
         border: 1px solid @border-color;
         border-radius: @border-radius-sm;
         background: @bg-primary;
-        font-size: 14px;
+        font-size: 13px;
         transition: all 0.2s ease;
 
         &:focus {
@@ -65,7 +65,7 @@
         display: flex;
         align-items: center;
         gap: @spacing-xs;
-        font-size: 14px;
+        font-size: 12px;
         cursor: pointer;
         color: @text-secondary;
         transition: color 0.2s ease;
@@ -76,14 +76,14 @@
       }
 
       button {
-        padding: @spacing-sm @spacing-md;
+        padding: @spacing-xs @spacing-sm;
         border: none;
         border-radius: @border-radius-sm;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 500;
         transition: all 0.2s ease;
-        min-height: 36px;
+        min-height: 32px;
         display: flex;
         align-items: center;
         gap: @spacing-xs;
@@ -126,9 +126,9 @@
     flex-direction: column;
 
     .event-count {
-      padding: @spacing-sm @spacing-md;
+      padding: @spacing-xs @spacing-sm;
       background: @bg-tertiary;
-      font-size: 14px;
+      font-size: 12px;
       color: @text-secondary;
       border-bottom: 1px solid @border-color;
       flex-shrink: 0;
@@ -147,7 +147,7 @@
       flex: 1;
       min-height: 0;
       overflow-y: auto;
-      padding: @spacing-sm;
+      padding: @spacing-xs;
     }
   }
 
@@ -223,7 +223,7 @@
       
       pre {
         margin: 0;
-        font-size: 12px;
+        font-size: 14px;
         color: @text-secondary;
         background: @bg-secondary;
         padding: @spacing-sm;
@@ -233,6 +233,7 @@
         overflow-y: auto;
         border: 1px solid @border-color;
         line-height: 1.4;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
       }
     }
   }
@@ -335,7 +336,7 @@
         padding: @spacing-xs @spacing-sm;
         
         pre {
-          font-size: 11px;
+          font-size: 13px;
           max-height: 150px;
         }
       }
