@@ -1,8 +1,8 @@
+use log;
 use sonic_rs::{
     from_str, to_string, to_string_pretty, Error, JsonType, JsonValueMutTrait, JsonValueTrait,
     Value,
 };
-use log;
 
 #[tauri::command]
 pub fn format(str: &str) -> String {
@@ -205,4 +205,47 @@ fn recur_parse(mut json: &mut Value) {
             log::debug!("递归解析遇到非对象/数组/字符串类型");
         }
     }
+}
+
+#[test]
+fn test_sort() {
+    let json = r#"{
+        "a": [
+            {"b": 1},
+            {"b": 2},
+            {"b": 3}
+        ],
+        "c": [
+            {"d": 1},
+            {"d": 2},
+            {"d": 3}
+        ]
+    }"#;
+    let mut json: Value = from_str(json).unwrap();
+    recur_sort(&mut json);
+    print!("{}\n", to_string(&json).unwrap());
+    recur_sort(&mut json);
+    print!("{}\n", to_string(&json).unwrap());
+    recur_sort(&mut json);
+    print!("{}\n", to_string(&json).unwrap());
+    recur_sort(&mut json);
+    print!("{}\n", to_string(&json).unwrap());
+    let mut object = sonic_rs::Object::new();
+    object.insert("a", 1);
+    object.insert("b", 2);
+    object.insert("c", 3);
+    object.insert("d", 4);
+    println!("{}", to_string(&object).unwrap());
+    let mut object = sonic_rs::Object::new();
+    object.insert("a", 1);
+    object.insert("b", 2);
+    object.insert("c", 3);
+    object.insert("d", 4);
+    println!("{}", to_string(&object).unwrap());
+    let mut object = sonic_rs::Object::new();
+    object.insert("a", 1);
+    object.insert("b", 2);
+    object.insert("c", 3);
+    object.insert("d", 4);
+    println!("{}", to_string(&object).unwrap());
 }
