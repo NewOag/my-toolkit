@@ -69,7 +69,7 @@ const theme = EditorView.theme({
         fontSize: "14px"
     },
     ".cm-scroller": {
-        "scrollbar-width": "none"
+        // "scrollbar-width": "none"
     },
     ".cm-scroller::-webkit-scrollbar": {
         width: 0,
